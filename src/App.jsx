@@ -29,7 +29,48 @@ function App() {
   const [search, setSearch] = useState('');
   const [labRecords, setLabRecords] = useState({});
 
+  const [patientId, setPatientId] = useState('');
+  const [patients, setPatients] = useState({});
+
+  useEffect(() => {
+    const saved = localStorage.getItem('abx_patients');
+    if (saved) setPatients(JSON.parse(saved));
+  }, []);
+
+  const savePatient = () => {
+    if (!patientId) return alert('Please enter a Patient ID/Name to save.');
+    const data = {
+      patientId,
+      date: new Date().toLocaleDateString(),
+      selectedSourceId,
+      riskModifiers: Array.from(riskModifiers),
+      manualAbx: Array.from(manualAbx),
+      cultureSource,
+      labRecords,
+      eGFR, 
+      childPugh
+    };
+    const next = { ...patients, [patientId]: data };
+    setPatients(next);
+    localStorage.setItem('abx_patients', JSON.stringify(next));
+  };
+
+  const loadPatient = (id) => {
+    const data = patients[id];
+    if (!data) return;
+    setPatientId(data.patientId);
+    setSelectedSourceId(data.selectedSourceId);
+    setRiskModifiers(new Set(data.riskModifiers || []));
+    setManualAbx(new Set(data.manualAbx || []));
+    setCultureSource(data.cultureSource || 'blood');
+    setLabRecords(data.labRecords || {});
+    setEGFR(data.eGFR || 100);
+    setChildPugh(data.childPugh || 'A');
+    setActiveTab('situation');
+  };
+
   const resetAll = () => {
+    setPatientId('');
     setSelectedSourceId(null);
     setRiskModifiers(new Set());
     setManualAbx(new Set());
@@ -82,7 +123,10 @@ function App() {
             onShowEmpiric={() => setActiveTab('regimen')} 
             isDarkMode={isDarkMode}
             onToggleTheme={() => setIsDarkMode(!isDarkMode)}
-            onNewPatient={resetAll}
+            pmProps={{
+              patientId, setPatientId, patients,
+              onSave: savePatient, onLoad: loadPatient, onReset: resetAll
+            }}
           />
         )}
         {activeTab === 'regimen' && (

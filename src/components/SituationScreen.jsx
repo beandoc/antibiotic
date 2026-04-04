@@ -1,17 +1,18 @@
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { SOURCES } from '../data';
+import { PatientManager } from './PatientManager';
 
 const RISK_MODS_FALLBACK = ['ICU / Ventilated', 'Prev. ABX <90d', 'Known MDR Carrier', 'Immunocompromised', 'Renal Impairment', 'Hepatic Impairment'];
 
-export function SituationScreen({ selectedId, onToggleSource, riskModifiers, onToggleModifier, onShowEmpiric, isDarkMode, onToggleTheme, onNewPatient }) {
+export function SituationScreen({ selectedId, onToggleSource, riskModifiers, onToggleModifier, onShowEmpiric, isDarkMode, onToggleTheme, pmProps }) {
   const RISKS = RISK_MODS_FALLBACK;
   
   return (
     <div className="screen fade-in">
        <header className="screen-header mode-hdr">
-        <div>
-           <button className="new-patient-btn" onClick={onNewPatient}>+ NEW PATIENT</button>
+        <div style={{ width: '100%' }}>
+           <PatientManager {...pmProps} />
            <h1>SUSPECTED SOURCE</h1>
         </div>
         <button className="theme-toggle" onClick={onToggleTheme}>

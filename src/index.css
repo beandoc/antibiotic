@@ -976,6 +976,76 @@ body {
   cursor: pointer;
 }
 
+/* ── PATIENT MANAGER ── */
+.patient-manager {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.pm-active-row {
+  display: flex;
+  gap: 8px;
+}
+
+.pm-active-row input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.pm-btn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.pm-btn.ghost {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+.pm-directory {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.pm-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+.pm-entry:hover {
+  background: rgba(0, 212, 170, 0.1);
+}
+.pm-id { font-weight: 800; color: var(--accent); }
+.pm-date { color: var(--text-muted); }
+
+
 /* ── APP LAYOUT REALIGNMENT ── */
 .app-container {
   display: flex;
