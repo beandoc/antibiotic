@@ -44,6 +44,10 @@ function App() {
     return [...recs].sort((a, b) => isHighRisk ? b.tier - a.tier : a.tier - b.tier);
   }, [selectedSourceId, riskModifiers]);
 
+  const currentSource = useMemo(() => {
+    return SOURCES.find(s => s.id === selectedSourceId) || { id: 'all', l: 'Undifferentiated', ico: '🌐' };
+  }, [selectedSourceId]);
+
   const manualRegimen = useMemo(() => {
     if (manualAbx.size === 0) return null;
     return { name: 'MANUAL BUILD', abx: Array.from(manualAbx), tier: 0, notes: 'User-specified antibiotic combination.' };
@@ -59,7 +63,7 @@ function App() {
     const orgs = relevantOrgs;
     const scores = orgs.map(o => {
       const s = Math.max(...abxIds.map(id => {
-        const abx = ANTIBIOTICS.find(a => a.id === id);
+        const abx = ANTIBIOTICS.find(a => String(a.id) === String(id));
         return (abx && abx.coverage) ? abx.coverage[o.id] || 0 : 0;
       }));
       return { o, s };
@@ -338,7 +342,7 @@ function CultureScreen({ search, setSearch, activeSource, setSource, labRecords,
 }
 
 function SafetyScreen({ eGFR, setEGFR, childPugh, setChildPugh, currentRegimen }) {
-  const drugs = currentRegimen?.abx?.map(id => ANTIBIOTICS.find(a => a.id === id) || { name: id }) || [];
+  const drugs = currentRegimen?.abx?.map(id => ANTIBIOTICS.find(a => String(a.id) === String(id)) || { name: id }) || [];
   const creatinine = (2.4 * (100 / eGFR)).toFixed(1);
   const ckdStage = eGFR < 15 ? '5' : eGFR < 30 ? '4' : eGFR < 45 ? '3b' : eGFR < 60 ? '3a' : '2';
 
