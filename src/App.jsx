@@ -106,6 +106,7 @@ function App() {
             onRemoveRecord={(s) => {const n = {...labRecords}; delete n[s]; setLabRecords(n);}}
             currentRegimen={manualRegimen || availableRegimens[activeRegimenIdx]} 
             getCoverage={getCoverage} 
+            onSkip={() => setActiveTab('safety')}
           />
         )}
         {activeTab === 'safety' && (

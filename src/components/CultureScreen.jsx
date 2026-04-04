@@ -1,8 +1,8 @@
 import React from 'react';
-import { Microscope, Search, Plus } from 'lucide-react';
+import { Microscope, Search, Plus, ShieldCheck } from 'lucide-react';
 import { SOURCES, ORGANISMS } from '../data';
 
-export function CultureScreen({ search, setSearch, activeSource, setSource, labRecords, onAddRecord, onRemoveRecord, currentRegimen, getCoverage }) {
+export function CultureScreen({ search, setSearch, activeSource, setSource, labRecords, onAddRecord, onRemoveRecord, currentRegimen, getCoverage, onSkip }) {
   const filteredOrgs = search.length > 1 ? ORGANISMS.filter(o => o.name.toLowerCase().includes(search.toLowerCase())) : [];
   
   return (
@@ -38,6 +38,17 @@ export function CultureScreen({ search, setSearch, activeSource, setSource, labR
            )}
 
            <div className="lab-history-stack">
+              {Object.keys(labRecords).length === 0 && !search && (
+                 <div className="empty-culture-state">
+                    <Microscope size={32} className="ecs-ico" />
+                    <h3>No cultures reported</h3>
+                    <p>Enter pathogen data manually using the search above to cross-reference against the current regimen.</p>
+                    <button className="confirm-btn ecs-btn" onClick={onSkip}>
+                       Proceed to Safety Check →
+                    </button>
+                 </div>
+              )}
+
               {Object.entries(labRecords).map(([srcId, org]) => {
                  const src = SOURCES.find(x => x.id === srcId) || { l: 'Other', ico: '🔬' };
                  const covResult = getCoverage(org.id, currentRegimen?.abx || []);

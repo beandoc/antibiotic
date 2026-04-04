@@ -993,3 +993,41 @@ body {
   padding: 20px 16px 140px 16px; /* Added extra padding to ensure bottom content clears the nav */
   -webkit-overflow-scrolling: touch;
 }
+
+/* ── EMPTY CULTURE STATE ── */
+.empty-culture-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  margin-top: 24px;
+}
+
+.ecs-ico {
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.empty-culture-state h3 {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.empty-culture-state p {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+
+.ecs-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: #fff;
+}
