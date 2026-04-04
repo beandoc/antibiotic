@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AbxSpectrum v3 — Clinical Antibiotic Decision Support</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#060b10;--sf:#0c1620;--sf2:#111e2b;--sf3:#172333;--sf4:#1c2a3c;
+  --bd:#1d2e40;--bd2:#142030;
+  --tx:#cfdde8;--txm:#607888;--txd:#2d4255;
+  --ac:#00ccaa;--ac2:#1a90e0;--warn:#e09a10;--danger:#e05050;
+  --c3b:#002618;--c3t:#00ccaa;--c3b2:#003d27;
+  --c2b:#0c2416;--c2t:#2db85a;--c2b2:#112e1c;
+  --c1b:#241700;--c1t:#c49200;--c1b2:#2e1e00;
+  --c0b:#0c1620;--c0t:#1e3040;
+  --gpc:#a78bfa;--gpb:#c084fc;--gne:#38bdf8;--gnn:#22d3ee;
+  --nf:#f87171;--atyp:#fbbf24;--an:#fb7185;
+  --cov-full:#00ccaa;--cov-good:#2db85a;--cov-var:#c49200;--cov-none:#e05050;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'IBM Plex Mono',monospace;background:var(--bg);color:var(--tx);display:flex;flex-direction:column;}
+
+/* ═══ HEADER ═══ */
+header{background:var(--sf);border-bottom:2px solid var(--bd);padding:0 12px;display:flex;align-items:center;gap:10px;height:46px;flex-shrink:0;z-index:300;}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--ac);white-space:nowrap;letter-spacing:-.02em;display:flex;align-items:baseline;gap:5px;}
+.logo-v{font-size:9px;color:var(--txm);font-family:'IBM Plex Mono',monospace;font-weight:400;}
+.vsp{width:1px;height:20px;background:var(--bd);flex-shrink:0;}
+.src-bar{display:flex;gap:3px;flex:1;align-items:center;overflow-x:auto;padding:2px 0;}
+.src-bar::-webkit-scrollbar{height:0;}
+.src-btn{background:transparent;border:1px solid var(--bd);color:var(--txm);padding:4px 9px;border-radius:4px;cursor:pointer;font-size:9px;font-family:'IBM Plex Mono',monospace;transition:all .15s;white-space:nowrap;display:flex;align-items:center;gap:4px;}
+.src-btn:hover{border-color:var(--txm);color:var(--tx);background:var(--sf2);}
+.src-btn.active{border-color:var(--ac);color:var(--ac);background:rgba(0,204,170,.09);font-weight:600;}
+.src-ico{font-size:10px;}
+.hdr-r{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.mode-wrap{display:flex;border:1px solid var(--bd);border-radius:4px;overflow:hidden;}
+.mode-btn{background:transparent;color:var(--txm);padding:4px 10px;cursor:pointer;font-size:9px;font-family:'IBM Plex Mono',monospace;transition:all .12s;border:none;border-right:1px solid var(--bd);}
+.mode-btn:last-child{border-right:none;}
+.mode-btn.on{background:var(--sf3);color:var(--ac2);}
+.mode-btn:hover:not(.on){background:var(--sf2);}
+
+/* ═══ LAYOUT ═══ */
+.layout{display:flex;flex:1;overflow:hidden;}
+
+/* ═══ LEFT SIDEBAR — ABX ═══ */
+.lsb{width:218px;background:var(--sf);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.sb-hdr{padding:7px 10px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;gap:6px;}
+.sb-title{font-size:8px;color:var(--txm);text-transform:uppercase;letter-spacing:.1em;font-weight:600;}
+.sb-acts{display:flex;gap:2px;}
+.xb{background:transparent;border:1px solid var(--bd);color:var(--txd);padding:1px 6px;border-radius:2px;cursor:pointer;font-size:7px;font-family:'IBM Plex Mono',monospace;transition:all .1s;}
+.xb:hover{color:var(--txm);border-color:var(--txm);}
+.sb-scroll{flex:1;overflow-y:auto;}
+.sb-scroll::-webkit-scrollbar{width:2px;}
+.sb-scroll::-webkit-scrollbar-thumb{background:var(--bd);}
+/* Class groups */
+.cg{border-bottom:1px solid var(--bd2);}
+.cg-h{display:flex;align-items:center;padding:5px 10px;cursor:pointer;gap:5px;user-select:none;transition:background .1s;}
+.cg-h:hover{background:var(--sf2);}
+.cg-name{font-size:8px;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;flex:1;}
+.cg-acts{display:flex;gap:2px;opacity:0;transition:opacity .1s;}
+.cg-h:hover .cg-acts{opacity:1;}
+.cga{background:transparent;border:1px solid var(--bd);padding:1px 4px;border-radius:2px;cursor:pointer;font-size:6px;font-family:'IBM Plex Mono',monospace;color:var(--txd);}
+.cga:hover{color:var(--ac);border-color:var(--ac);}
+.cgn:hover{color:var(--warn);border-color:var(--warn);}
+.chev{font-size:7px;color:var(--txd);transition:transform .15s;margin-left:2px;}
+.cg.col .chev{transform:rotate(-90deg);}
+.cg.col .cg-items{display:none;}
+.cg-items{padding:2px 0 4px;}
+.ai{display:flex;align-items:center;padding:3px 10px 3px 20px;gap:6px;cursor:pointer;transition:background .1s;}
+.ai:hover{background:var(--sf2);}
+.ai input[type=checkbox]{width:11px;height:11px;accent-color:var(--ac);flex-shrink:0;cursor:pointer;}
+.al{font-size:9.5px;color:var(--tx);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.ar{font-size:7px;color:var(--txd);background:var(--sf3);padding:1px 4px;border-radius:2px;white-space:nowrap;flex-shrink:0;}
+/* Presets */
+.preset-sec{border-top:1px solid var(--bd);padding:6px 0 5px;}
+.preset-lbl{font-size:7px;color:var(--txd);text-transform:uppercase;letter-spacing:.09em;padding:0 10px 4px;}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:0 7px;}
+.pb{background:var(--sf2);border:1px solid var(--bd);color:var(--txm);padding:5px 5px;border-radius:3px;cursor:pointer;font-size:7.5px;font-family:'IBM Plex Mono',monospace;text-align:center;line-height:1.3;transition:all .13s;}
+.pb:hover{border-color:var(--ac);color:var(--ac);background:rgba(0,204,170,.06);}
+
+/* ═══ CENTER — COVERAGE MATRIX ═══ */
+.center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
+.toolbar{background:var(--sf);border-bottom:1px solid var(--bd);padding:5px 10px;display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;}
+.cat-row{display:flex;gap:2px;flex-wrap:wrap;flex:1;}
+.cat-btn{background:transparent;border:1px solid var(--bd);color:var(--txm);padding:3px 8px;border-radius:3px;cursor:pointer;font-size:8.5px;font-family:'IBM Plex Mono',monospace;transition:all .1s;white-space:nowrap;}
+.cat-btn:hover{background:var(--sf2);}
+.cat-btn.on{background:var(--sf2);}
+.cat-btn[data-c=gpc].on{border-color:var(--gpc);color:var(--gpc);}
+.cat-btn[data-c=gpb].on{border-color:var(--gpb);color:var(--gpb);}
+.cat-btn[data-c=gne].on{border-color:var(--gne);color:var(--gne);}
+.cat-btn[data-c=gnn].on{border-color:var(--gnn);color:var(--gnn);}
+.cat-btn[data-c=nf].on{border-color:var(--nf);color:var(--nf);}
+.cat-btn[data-c=atyp].on{border-color:var(--atyp);color:var(--atyp);}
+.cat-btn[data-c=an].on{border-color:var(--an);color:var(--an);}
+.srch{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:4px 8px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:9px;width:145px;outline:none;}
+.srch::placeholder{color:var(--txd);}
+.srch:focus{border-color:var(--ac);}
+/* Table wrapper */
+.tw{flex:1;overflow:auto;position:relative;}
+.tw::-webkit-scrollbar{width:5px;height:5px;}
+.tw::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+table{border-collapse:collapse;width:max-content;}
+thead{position:sticky;top:0;z-index:100;}
+th.corner{background:var(--sf);border-right:1px solid var(--bd);border-bottom:2px solid var(--bd);padding:4px 8px;position:sticky;left:0;z-index:120;min-width:192px;vertical-align:bottom;}
+.corner-in{font-size:7px;color:var(--txd);text-transform:uppercase;letter-spacing:.07em;}
+th.ath{background:var(--sf);border-right:1px solid var(--bd2);border-bottom:2px solid var(--bd);padding:0;vertical-align:bottom;height:110px;width:32px;cursor:pointer;transition:background .1s;}
+th.ath:hover{background:var(--sf3);}
+.ath-in{transform:rotate(-50deg);transform-origin:bottom left;white-space:nowrap;padding:0 0 4px 5px;font-size:8.5px;color:var(--txm);font-weight:400;display:block;width:110px;transition:color .1s;}
+th.ath.on .ath-in{color:var(--ac);}
+th.ath.hl .ath-in{color:#fff;}
+th.ath.hl{background:var(--sf3);}
+/* Org group headers */
+.gh td{background:var(--sf2);border-bottom:1px solid var(--bd);padding:3px 8px;font-size:7px;color:var(--txd);text-transform:uppercase;letter-spacing:.09em;position:sticky;left:0;z-index:40;font-weight:600;}
+/* Org rows */
+tr.or{cursor:pointer;transition:background .08s;}
+tr.or:hover{background:rgba(0,204,170,.04);}
+tr.or.sel{background:rgba(0,204,170,.09);}
+tr.or.sel td.oc{background:var(--sf3);}
+td.oc{position:sticky;left:0;background:var(--bg);border-right:1px solid var(--bd);border-bottom:1px solid var(--bd2);padding:2px 8px;white-space:nowrap;min-width:192px;z-index:30;transition:background .08s;}
+tr.or:hover td.oc{background:var(--sf2);}
+.oi{display:flex;align-items:center;gap:5px;}
+.odot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.onm{font-size:10px;font-style:italic;color:var(--tx);}
+.onm.sm{color:var(--ac);font-weight:500;}
+.oscore{font-size:7px;color:var(--txd);background:var(--sf3);padding:1px 4px;border-radius:10px;margin-left:auto;flex-shrink:0;transition:all .2s;}
+.oscore.s-high{background:rgba(0,204,170,.15);color:var(--ac);}
+.oscore.s-med{background:rgba(45,184,90,.12);color:var(--c2t);}
+.oscore.s-low{background:rgba(196,146,0,.12);color:var(--c1t);}
+.oscore.s-none{background:rgba(224,80,80,.12);color:var(--danger);}
+/* Coverage cells */
+td.cc{border-right:1px solid var(--bd2);border-bottom:1px solid var(--bd2);width:32px;text-align:center;padding:0;vertical-align:middle;transition:filter .1s;cursor:default;}
+td.cc:hover{filter:brightness(1.6);}
+td.cc.hl{outline:1px solid var(--txm);outline-offset:-1px;}
+.v3{background:var(--c3b);}  .v2{background:var(--c2b);}  .v1{background:var(--c1b);}  .v0{background:var(--c0b);}
+.s3{color:var(--c3t);font-size:9px;font-weight:700;line-height:24px;display:block;}
+.s2{color:var(--c2t);font-size:9px;font-weight:600;line-height:24px;display:block;}
+.s1{color:var(--c1t);font-size:8px;font-weight:500;line-height:24px;display:block;}
+.s0{color:var(--c0t);font-size:9px;line-height:24px;display:block;}
+/* Score col */
+td.sc{border-right:1px solid var(--bd2);border-bottom:1px solid var(--bd2);width:44px;padding:0 3px;vertical-align:middle;}
+.bar-wrap{width:36px;height:5px;background:var(--sf3);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;transition:width .3s;}
+
+/* ═══ RIGHT PANEL — ANALYSIS ═══ */
+.rp{width:300px;background:var(--sf);border-left:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.rp-tabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0;}
+.rp-tab{flex:1;background:transparent;border:none;border-bottom:2px solid transparent;color:var(--txm);padding:9px 4px;cursor:pointer;font-size:8px;font-family:'IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.06em;transition:all .12s;display:flex;align-items:center;justify-content:center;gap:3px;}
+.rp-tab:hover{color:var(--tx);background:var(--sf2);}
+.rp-tab.on{color:var(--ac);border-bottom-color:var(--ac);}
+.rp-tab .badge{background:var(--danger);color:#fff;border-radius:8px;padding:1px 5px;font-size:6px;min-width:14px;text-align:center;}
+.rp-tab.on .badge{background:var(--ac);color:var(--bg);}
+.rp-body{flex:1;overflow-y:auto;padding:10px;}
+.rp-body::-webkit-scrollbar{width:3px;}
+.rp-body::-webkit-scrollbar-thumb{background:var(--bd);}
+
+/* ─ Analysis tab ─ */
+.analysis-header{margin-bottom:10px;}
+.cov-ring{display:flex;align-items:center;gap:10px;padding:10px;background:var(--sf2);border-radius:6px;border:1px solid var(--bd);margin-bottom:8px;}
+.ring-stat{text-align:center;flex:1;}
+.ring-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1;}
+.ring-lbl{font-size:7px;color:var(--txm);text-transform:uppercase;letter-spacing:.06em;margin-top:2px;}
+.ring-div{width:1px;height:30px;background:var(--bd);}
+.cov-bar-full{height:6px;background:var(--sf3);border-radius:4px;overflow:hidden;margin:8px 0 4px;}
+.cov-bar-seg{height:100%;display:inline-block;float:left;transition:width .4s;}
+.cov-legend{display:flex;gap:8px;margin-bottom:10px;}
+.cl-item{display:flex;align-items:center;gap:3px;font-size:7px;}
+.cl-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.section-hdr{font-size:8px;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 5px;display:flex;align-items:center;gap:5px;}
+.section-hdr::after{content:'';flex:1;height:1px;background:var(--bd);}
+.gap-item{display:flex;align-items:center;gap:6px;padding:5px 7px;border-radius:4px;margin:2px 0;cursor:pointer;transition:background .1s;}
+.gap-item:hover{background:var(--sf2);}
+.gap-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.gap-name{font-size:9px;font-style:italic;flex:1;color:var(--tx);}
+.gap-crit{font-size:6px;background:rgba(224,80,80,.15);color:var(--danger);padding:1px 4px;border-radius:3px;white-space:nowrap;}
+.gap-var{font-size:6px;background:rgba(196,146,0,.15);color:var(--c1t);padding:1px 4px;border-radius:3px;white-space:nowrap;}
+.gap-best{font-size:7px;color:var(--txd);}
+.critical-banner{background:rgba(224,80,80,.1);border:1px solid rgba(224,80,80,.3);border-radius:5px;padding:8px 10px;margin-bottom:10px;}
+.cb-title{font-size:8px;color:var(--danger);font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:4px;}
+.cb-list{font-size:8px;color:var(--tx);line-height:1.7;}
+.cb-item{display:flex;align-items:center;gap:4px;}
+.cb-dot{width:5px;height:5px;background:var(--danger);border-radius:50%;}
+.no-gaps{text-align:center;padding:20px;color:var(--txm);font-size:9px;}
+.no-abx{text-align:center;padding:20px;color:var(--txd);font-size:9px;}
+
+/* ─ Recommendations tab ─ */
+.rec-source{font-size:9px;color:var(--txm);margin-bottom:8px;padding:6px 8px;background:var(--sf2);border-radius:4px;border-left:2px solid var(--ac);}
+.rec-card{background:var(--sf2);border:1px solid var(--bd);border-radius:6px;padding:10px;margin-bottom:8px;transition:border-color .15s;cursor:default;}
+.rec-card:hover{border-color:var(--bd);}
+.rec-tier{font-size:7px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+.tier-1{color:var(--ac);}
+.tier-2{color:var(--c2t);}
+.tier-3{color:var(--warn);}
+.rec-name{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--tx);margin-bottom:5px;}
+.rec-abx{display:flex;flex-wrap:wrap;gap:3px;margin:5px 0;}
+.rec-abx-chip{background:rgba(0,204,170,.1);border:1px solid rgba(0,204,170,.25);color:var(--ac);padding:2px 6px;border-radius:10px;font-size:7.5px;}
+.rec-notes{font-size:8px;color:var(--txm);line-height:1.5;margin:5px 0;}
+.rec-apply{background:rgba(0,204,170,.12);border:1px solid rgba(0,204,170,.3);color:var(--ac);padding:4px 10px;border-radius:3px;cursor:pointer;font-size:8px;font-family:'IBM Plex Mono',monospace;transition:all .13s;width:100%;text-align:center;}
+.rec-apply:hover{background:rgba(0,204,170,.2);border-color:var(--ac);}
+.rec-cov-row{display:flex;gap:5px;margin:5px 0 2px;flex-wrap:wrap;}
+.rec-cov-pill{font-size:6.5px;padding:2px 5px;border-radius:3px;white-space:nowrap;}
+.pill-cov{background:rgba(0,204,170,.1);color:var(--ac);border:1px solid rgba(0,204,170,.2);}
+.pill-miss{background:rgba(224,80,80,.1);color:var(--danger);border:1px solid rgba(224,80,80,.2);}
+
+/* ─ Details tab ─ */
+.det-empty{text-align:center;padding:30px 10px;color:var(--txd);font-size:9px;line-height:1.7;}
+.det-org-hdr{padding:8px;background:var(--sf2);border-radius:5px;border:1px solid var(--bd);margin-bottom:10px;}
+.det-org-name{font-size:13px;font-style:italic;font-weight:600;color:var(--tx);margin-bottom:2px;}
+.det-cat-badge{font-size:7px;padding:2px 6px;border-radius:3px;display:inline-block;}
+.det-abx-item{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:3px;margin:1px 0;}
+.det-abx-item:hover{background:var(--sf2);}
+.det-abx-name{font-size:9px;color:var(--tx);flex:1;}
+.det-abx-class{font-size:7px;color:var(--txd);}
+.det-cov-badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;min-width:24px;text-align:center;}
+.det-sep{height:1px;background:var(--bd2);margin:6px 0;}
+
+/* ═══ FOOTER ═══ */
+footer{background:var(--sf);border-top:1px solid var(--bd);padding:4px 12px;display:flex;align-items:center;gap:14px;height:28px;flex-shrink:0;z-index:200;}
+.leg{display:flex;gap:8px;align-items:center;}
+.leg-lbl{font-size:7px;color:var(--txd);text-transform:uppercase;letter-spacing:.06em;margin-right:2px;}
+.li{display:flex;align-items:center;gap:3px;font-size:7.5px;}
+.ld{width:10px;height:10px;border-radius:2px;}
+.fstats{display:flex;gap:12px;margin-left:auto;}
+.fst{font-size:7.5px;color:var(--txm);}
+.fst span{color:var(--ac);}
+.disc{font-size:6.5px;color:var(--txd);max-width:280px;text-align:right;}
+
+/* ═══ TOOLTIP ═══ */
+#tip{position:fixed;background:var(--sf3);border:1px solid var(--bd);border-radius:5px;padding:7px 10px;font-size:9px;color:var(--tx);pointer-events:none;z-index:999;max-width:200px;display:none;line-height:1.5;box-shadow:0 4px 20px rgba(0,0,0,.4);}
+#tip strong{color:var(--ac);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">AbxSpectrum <span class="logo-v">v3 · Sanford 2024</span></div>
+  <div class="vsp"></div>
+  <div class="src-bar" id="srcBar"></div>
+  <div class="vsp"></div>
+  <div class="hdr-r">
+    <div class="mode-wrap">
+      <button class="mode-btn on" id="mInd" onclick="setMode('ind')">Individual</button>
+      <button class="mode-btn" id="mCmb" onclick="setMode('comb')">Combined</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT: ABX SELECTOR -->
+  <aside class="lsb">
+    <div class="sb-hdr">
+      <span class="sb-title">Antibiotics · 91</span>
+      <div class="sb-acts">
+        <button class="xb" onclick="selAll()">All</button>
+        <button class="xb" onclick="selNone()">None</button>
+      </div>
+    </div>
+    <div class="sb-scroll" id="abxSB"></div>
+    <div class="preset-sec">
+      <div class="preset-lbl">Quick Presets</div>
+      <div class="preset-grid" id="preGrid"></div>
+    </div>
+  </aside>
+
+  <!-- CENTER: COVERAGE MATRIX -->
+  <div class="center">
+    <div class="toolbar">
+      <div class="cat-row" id="catRow"></div>
+      <input class="srch" id="srch" placeholder="Search organism…" oninput="renderAll()">
+    </div>
+    <div class="tw" id="tw">
+      <table id="tbl"></table>
+    </div>
+  </div>
+
+  <!-- RIGHT: ANALYSIS PANEL -->
+  <div class="rp">
+    <div class="rp-tabs">
+      <button class="rp-tab on" id="tabAnalysis" onclick="showTab('analysis')">📊 Gaps <span class="badge" id="gapBadge">0</span></button>
+      <button class="rp-tab" id="tabRec" onclick="showTab('rec')">💡 Empiric</button>
+      <button class="rp-tab" id="tabDet" onclick="showTab('det')">🔬 Details</button>
+    </div>
+    <div class="rp-body" id="rpBody"></div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="leg">
+    <span class="leg-lbl">Coverage:</span>
+    <div class="li"><div class="ld" style="background:var(--c3b);border:1px solid var(--c3t)"></div><span style="color:var(--c3t)">++ Highly active</span></div>
+    <div class="li"><div class="ld" style="background:var(--c2b);border:1px solid var(--c2t)"></div><span style="color:var(--c2t)">+ Active</span></div>
+    <div class="li"><div class="ld" style="background:var(--c1b);border:1px solid var(--c1t)"></div><span style="color:var(--c1t)">± Variable</span></div>
+    <div class="li"><div class="ld" style="background:var(--c0b);border:1px solid var(--bd)"></div><span>Inactive</span></div>
+  </div>
+  <div class="fstats">
+    <div class="fst">ABX: <span id="stA">0</span></div>
+    <div class="fst">Shown: <span id="stO">0</span></div>
+    <div class="fst">Covered: <span id="stC">0</span></div>
+  </div>
+  <div class="disc">⚠ Reference only — verify with local antibiogram &amp; clinical context</div>
+</footer>
+<div id="tip"></div>
+
+<script>
+/* =====================================================================
+   ANTIBIOTICS (91)
+===================================================================== */
+const ABX=[
+{n:'Penicillin G',cls:'Penicillins',ro:'IV',def:0},
+{n:'Penicillin VK',cls:'Penicillins',ro:'PO',def:0},
+{n:'Nafcillin',cls:'Penicillins',ro:'IV',def:0},
+{n:'Oxacillin',cls:'Penicillins',ro:'IV',def:0},
+{n:'Cloxacillin',cls:'Penicillins',ro:'PO/IV',def:0},
+{n:'Flucloxacillin',cls:'Penicillins',ro:'PO/IV',def:0},
+{n:'Dicloxacillin',cls:'Penicillins',ro:'PO',def:0},
+{n:'Ampicillin',cls:'Penicillins',ro:'IV',def:0},
+{n:'Amoxicillin',cls:'Penicillins',ro:'PO',def:0},
+{n:'Amox-Clav',cls:'Penicillins',ro:'PO/IV',def:0},
+{n:'Amp-Sulb',cls:'Penicillins',ro:'IV',def:0},
+{n:'Pip-Tazo',cls:'Penicillins',ro:'IV',def:1},
+{n:'Doripenem',cls:'Carbapenems',ro:'IV',def:0},
+{n:'Ertapenem',cls:'Carbapenems',ro:'IV',def:1},
+{n:'Imp-cilastatin',cls:'Carbapenems',ro:'IV',def:0},
+{n:'Imp-cila-rele',cls:'Carbapenems',ro:'IV',def:0},
+{n:'Meropenem',cls:'Carbapenems',ro:'IV',def:1},
+{n:'Mero-Vabor',cls:'Carbapenems',ro:'IV',def:0},
+{n:'Aztreonam',cls:'Monobactams',ro:'IV',def:0},
+{n:'Aztreonam-Avibac',cls:'Monobactams',ro:'IV',def:0},
+{n:'Ciprofloxacin',cls:'Fluoroquinolones',ro:'IV/PO',def:1},
+{n:'Delafloxacin',cls:'Fluoroquinolones',ro:'IV/PO',def:0},
+{n:'Ofloxacin',cls:'Fluoroquinolones',ro:'PO',def:0},
+{n:'Levofloxacin',cls:'Fluoroquinolones',ro:'IV/PO',def:1},
+{n:'Moxifloxacin',cls:'Fluoroquinolones',ro:'IV/PO',def:1},
+{n:'Norfloxacin',cls:'Fluoroquinolones',ro:'PO',def:0},
+{n:'Prulifloxacin',cls:'Fluoroquinolones',ro:'PO',def:0},
+{n:'Gemifloxacin',cls:'Fluoroquinolones',ro:'PO',def:0},
+{n:'Gatifloxacin',cls:'Fluoroquinolones',ro:'PO',def:0},
+{n:'Cefazolin',cls:'Ceph (IV)',ro:'IV',def:1},
+{n:'Cefotetan',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefoxitin',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefuroxime IV',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefotaxime',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Ceftizoxime',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefoperazone',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Ceftriaxone',cls:'Ceph (IV)',ro:'IV',def:1},
+{n:'Ceftazidime',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefepime',cls:'Ceph (IV)',ro:'IV',def:1},
+{n:'Cefepime-enm',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Ceftaz-Avibac',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Ceftaroline',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Ceftobiprole',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Ceftol-Tazo',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefiderocol',cls:'Ceph (IV)',ro:'IV',def:0},
+{n:'Cefadroxil',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cephalexin',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefaclor',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefprozil',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefurox-Axetil',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefixime',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Ceftibuten',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefpodoxime',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefdinir',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Cefditoren',cls:'Ceph (PO)',ro:'PO',def:0},
+{n:'Gentamicin',cls:'Aminoglycosides',ro:'IV',def:0},
+{n:'Tobramycin',cls:'Aminoglycosides',ro:'IV',def:0},
+{n:'Amikacin',cls:'Aminoglycosides',ro:'IV',def:0},
+{n:'Plazomicin',cls:'Aminoglycosides',ro:'IV',def:0},
+{n:'Clindamycin',cls:'Lincosamides',ro:'IV/PO',def:1},
+{n:'Erythromycin',cls:'Macrolides',ro:'IV/PO',def:0},
+{n:'Azithromycin',cls:'Macrolides',ro:'IV/PO',def:1},
+{n:'Clarithromycin',cls:'Macrolides',ro:'PO',def:0},
+{n:'Telithromycin',cls:'Macrolides',ro:'PO',def:0},
+{n:'Doxycycline',cls:'Tetracyclines',ro:'IV/PO',def:1},
+{n:'Eravacycline',cls:'Tetracyclines',ro:'IV',def:0},
+{n:'Minocycline',cls:'Tetracyclines',ro:'IV/PO',def:0},
+{n:'Omadacycline',cls:'Tetracyclines',ro:'IV/PO',def:0},
+{n:'Tetracycline',cls:'Tetracyclines',ro:'PO',def:0},
+{n:'Tigecycline',cls:'Tetracyclines',ro:'IV',def:0},
+{n:'Daptomycin',cls:'Glyco/Lipo',ro:'IV',def:0},
+{n:'Vancomycin',cls:'Glyco/Lipo',ro:'IV',def:1},
+{n:'Teicoplanin',cls:'Glyco/Lipo',ro:'IV',def:0},
+{n:'Telavancin',cls:'Glyco/Lipo',ro:'IV',def:0},
+{n:'Oritavancin',cls:'Glyco/Lipo',ro:'IV',def:0},
+{n:'Dalbavancin',cls:'Glyco/Lipo',ro:'IV',def:0},
+{n:'Linezolid',cls:'Oxazolidinones',ro:'IV/PO',def:0},
+{n:'Tedizolid',cls:'Oxazolidinones',ro:'IV/PO',def:0},
+{n:'Polymyxin B',cls:'Polymyxins',ro:'IV',def:0},
+{n:'Colistin',cls:'Polymyxins',ro:'IV',def:0},
+{n:'Lefamulin',cls:'Pleuromutilins',ro:'IV/PO',def:0},
+{n:'Chloramphenicol',cls:'Other',ro:'IV/PO',def:0},
+{n:'Fusidic Acid',cls:'Other',ro:'IV/PO',def:0},
+{n:'Rifampicin (comb)',cls:'Other',ro:'PO',def:0},
+{n:'TMP-SMX',cls:'Other',ro:'IV/PO',def:1},
+{n:'Nitrofurantoin',cls:'Other',ro:'PO',def:1},
+{n:'Fosfomycin (IV)',cls:'Other',ro:'IV',def:0},
+{n:'Fosfomycin (PO)',cls:'Other',ro:'PO',def:0},
+{n:'Pivmecillinam',cls:'Other',ro:'PO',def:0},
+{n:'Metronidazole',cls:'Other',ro:'IV/PO',def:1},
+{n:'Pristinamycin',cls:'Other',ro:'PO',def:0},
+];
+
+/* =====================================================================
+   ORGANISMS (83)
+===================================================================== */
+const ORGS=[
+{n:'E. faecalis (VS)',c:'gpc',s:['all','bact','uti','endo','iab'],crit:0},
+{n:'E. faecium (VS)',c:'gpc',s:['all','bact','uti','endo'],crit:0},
+{n:'E. faecalis (VRE)',c:'gpc',s:['all','bact','endo'],crit:1},
+{n:'E. faecium (VRE)',c:'gpc',s:['all','bact','endo'],crit:1},
+{n:'S. aureus MSSA',c:'gpc',s:['all','bact','ssti','osteo','endo','cap','hap','iab'],crit:0},
+{n:'S. aureus MRSA',c:'gpc',s:['all','bact','ssti','osteo','endo','hap'],crit:1},
+{n:'Staph coag-neg (MS)',c:'gpc',s:['all','bact','endo','ssti'],crit:0},
+{n:'Staph coag-neg (MR)',c:'gpc',s:['all','bact','endo'],crit:1},
+{n:'S. epidermidis (MR)',c:'gpc',s:['all','bact','endo'],crit:1},
+{n:'S. epidermidis (MS)',c:'gpc',s:['all','bact','endo','ssti'],crit:0},
+{n:'S. lugdunensis',c:'gpc',s:['all','bact','endo','ssti'],crit:0},
+{n:'S. saprophyticus',c:'gpc',s:['all','uti'],crit:0},
+{n:'Strep. anginosus gp',c:'gpc',s:['all','bact','iab','ssti','endo'],crit:0},
+{n:'Strep. pyogenes (A)',c:'gpc',s:['all','ssti','cap'],crit:0},
+{n:'Strep. agalactiae (B)',c:'gpc',s:['all','bact','ssti','endo'],crit:0},
+{n:'Strep. gp C,F,G',c:'gpc',s:['all','bact','ssti'],crit:0},
+{n:'Strep. pneumoniae',c:'gpc',s:['all','cap','mening','bact'],crit:0},
+{n:'Viridans Strep.',c:'gpc',s:['all','bact','endo'],crit:0},
+{n:'Arcanobacter. sp.',c:'gpb',s:['all','ssti'],crit:0},
+{n:'C. diphtheriae',c:'gpb',s:['all'],crit:0},
+{n:'C. jeikeium',c:'gpb',s:['all','bact'],crit:1},
+{n:'L. monocytogenes',c:'gpb',s:['all','mening','bact'],crit:0},
+{n:'Nocardia sp.',c:'gpb',s:['all','cap','ssti'],crit:0},
+{n:'Aeromonas sp.',c:'gne',s:['all','bact','iab'],crit:0},
+{n:'C. freundii',c:'gne',s:['all','bact','uti','hap'],crit:0},
+{n:'C. koseri',c:'gne',s:['all','bact','uti','mening'],crit:0},
+{n:'E. cloacae',c:'gne',s:['all','bact','uti','hap'],crit:0},
+{n:'E. coli (S)',c:'gne',s:['all','uti','bact','iab','ssti'],crit:0},
+{n:'E. coli (ESBL)',c:'gne',s:['all','uti','bact','iab'],crit:1},
+{n:'E. coli (KPC)',c:'gne',s:['all','bact'],crit:1},
+{n:'E. coli (MBL)',c:'gne',s:['all','bact'],crit:1},
+{n:'Klebsiella pneu (S)',c:'gne',s:['all','bact','uti','hap','iab'],crit:0},
+{n:'Klebsiella oxytoca (S)',c:'gne',s:['all','bact','uti'],crit:0},
+{n:'Klebsiella (ESBL)',c:'gne',s:['all','bact','hap'],crit:1},
+{n:'Klebsiella (KPC)',c:'gne',s:['all','bact','hap'],crit:1},
+{n:'Klebsiella (MBL)',c:'gne',s:['all','bact'],crit:1},
+{n:'K. aerogenes',c:'gne',s:['all','bact','uti','hap'],crit:0},
+{n:'M. morganii',c:'gne',s:['all','bact','uti','ssti'],crit:0},
+{n:'P. mirabilis',c:'gne',s:['all','uti','bact','ssti'],crit:0},
+{n:'P. vulgaris',c:'gne',s:['all','uti','bact'],crit:0},
+{n:'Providencia sp.',c:'gne',s:['all','uti','bact'],crit:0},
+{n:'Salmonella sp.',c:'gne',s:['all','bact'],crit:0},
+{n:'Serratia marcescens',c:'gne',s:['all','bact','hap','uti'],crit:0},
+{n:'Shigella sp.',c:'gne',s:['all','iab'],crit:0},
+{n:'Y. enterocolitica',c:'gne',s:['all','bact','iab'],crit:0},
+{n:'Bartonella sp.',c:'gnn',s:['all','zoo'],crit:0},
+{n:'B. pertussis',c:'gnn',s:['all','cap'],crit:0},
+{n:'B. burgdorferi',c:'gnn',s:['all','zoo'],crit:0},
+{n:'Brucella sp.',c:'gnn',s:['all','zoo'],crit:0},
+{n:'C. jejuni',c:'gnn',s:['all','iab'],crit:0},
+{n:'Capnocytophaga sp.',c:'gnn',s:['all','bact','zoo'],crit:0},
+{n:'C. burnetii (Q fever)',c:'gnn',s:['all','zoo','endo'],crit:0},
+{n:'Ehrlichia, Anaplas.',c:'gnn',s:['all','zoo'],crit:0},
+{n:'Eikenella sp.',c:'gnn',s:['all','bact','ssti'],crit:0},
+{n:'F. tularensis',c:'gnn',s:['all','zoo'],crit:0},
+{n:'H. ducreyi',c:'gnn',s:['all','sti'],crit:0},
+{n:'H. influenzae',c:'gnn',s:['all','cap','mening','ssti'],crit:0},
+{n:'Kingella sp.',c:'gnn',s:['all','bact','osteo'],crit:0},
+{n:'K. granulomatis',c:'gnn',s:['all','sti'],crit:0},
+{n:'Legionella sp.',c:'gnn',s:['all','cap','hap'],crit:0},
+{n:'Leptospira sp.',c:'gnn',s:['all','zoo'],crit:0},
+{n:'M. catarrhalis',c:'gnn',s:['all','cap'],crit:0},
+{n:'N. meningitidis',c:'gnn',s:['all','mening','bact'],crit:0},
+{n:'P. multocida',c:'gnn',s:['all','ssti','bact','zoo'],crit:0},
+{n:'R. ricketsii (RMSF)',c:'gnn',s:['all','zoo'],crit:0},
+{n:'V. cholera',c:'gnn',s:['all','iab'],crit:0},
+{n:'V. parahemolyticus',c:'gnn',s:['all','iab'],crit:0},
+{n:'V. vulnificus',c:'gnn',s:['all','bact','ssti'],crit:0},
+{n:'Y. pestis',c:'gnn',s:['all','zoo'],crit:0},
+{n:'A. baumannii',c:'nf',s:['all','hap','bact'],crit:1},
+{n:'B. cepacia',c:'nf',s:['all','hap'],crit:0},
+{n:'P. aeruginosa',c:'nf',s:['all','hap','uti','bact','ssti'],crit:1},
+{n:'S. maltophilia',c:'nf',s:['all','hap'],crit:1},
+{n:'C. trachomatis',c:'atyp',s:['all','sti'],crit:0},
+{n:'Chlamydophila sp.',c:'atyp',s:['all','cap'],crit:0},
+{n:'M. pneumoniae',c:'atyp',s:['all','cap'],crit:0},
+{n:'B. fragilis',c:'an',s:['all','iab','bact'],crit:0},
+{n:'F. necrophorum',c:'an',s:['all','bact','ssti'],crit:0},
+{n:'Prevotella sp.',c:'an',s:['all','iab','ssti','cap'],crit:0},
+{n:'Actinomyces sp.',c:'an',s:['all','ssti','iab'],crit:0},
+{n:'Clostridium sp.',c:'an',s:['all','iab','ssti'],crit:0},
+{n:'C. acnes',c:'an',s:['all','bact','ssti'],crit:0},
+{n:'Peptostreptococci',c:'an',s:['all','iab','ssti','cap'],crit:0},
+];
+
+/* =====================================================================
+   COVERAGE MATRIX 83×91
+===================================================================== */
+const COV=[
+[3,0,0,0,0,0,0,3,3,2,2,2,0,0,2,2,1,1,0,0,1,2,1,2,2,2,1,2,2,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,2,1,2,1,2,2,3,3,2,2,2,2,2,0,0,0,1,1,1,0,2,1,1,0,0,0],
+[1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,2,1,2,1,2,2,1,1,1,2,1,3,2,0,0,0,1,1,1,0,2,1,1,0,0,2],
+[1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,0,0,1,2,0,3,2,0,0,0,1,0,1,0,2,1,1,0,0,0],
+[1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,2,0,0,1,2,0,3,2,0,0,0,1,0,1,0,2,1,1,0,0,2],
+[1,1,3,3,3,3,3,1,1,2,2,2,2,2,2,2,2,2,0,0,0,2,0,2,2,0,0,2,2,3,2,2,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,1,0,0,0,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,1,2,1,1,0,0,0,2],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,2,2,2,2,1,2,3,3,2,2,2,2,3,2,0,0,2,0,2,1,2,1,1,0,0,0,2],
+[1,1,3,3,3,3,3,1,1,2,2,2,2,2,2,2,2,2,0,0,0,2,0,2,2,0,0,2,2,3,2,2,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,1,0,0,0,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,1,2,1,1,0,0,0,2],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,2,2,2,1,2,2,3,2,2,2,2,3,2,0,0,2,0,2,1,2,1,1,0,0,0,2],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,2,2,2,1,2,2,3,2,2,2,2,3,2,0,0,2,0,2,1,2,1,1,0,0,0,2],
+[1,1,3,3,3,3,3,1,1,2,2,2,2,2,2,2,2,2,0,0,0,2,0,2,2,0,0,2,2,3,2,2,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,1,0,0,0,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,1,2,1,1,0,0,0,2],
+[1,1,3,3,3,3,3,1,1,2,2,2,2,2,2,2,2,2,0,0,0,2,0,2,2,0,0,2,2,3,2,2,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,1,0,0,0,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,1,2,1,1,0,0,0,2],
+[1,1,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0,1,1,1,1,0,2,2,0,0,0,1],
+[3,3,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,1,2,1,2,3,0,0,3,3,3,2,2,3,3,3,3,3,1,3,3,0,3,3,1,0,3,3,3,3,3,0,0,3,3,3,0,0,0,0,3,2,2,2,3,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,1,0,0,2,0,0,0,0,0,0,2],
+[3,3,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,1,2,1,2,3,0,0,3,3,3,2,2,3,3,3,3,3,1,3,3,0,3,3,1,0,3,3,3,3,3,0,0,3,3,3,0,0,0,0,3,3,3,3,3,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,1,0,0,2,0,0,0,0,0,0,2],
+[3,3,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,1,1,1,2,2,0,0,2,2,3,2,2,3,3,3,3,3,1,3,3,0,3,3,1,0,3,3,3,3,3,0,0,3,3,3,0,0,0,0,2,1,1,1,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,0,0,0,2,0,0,0,0,0,0,1],
+[3,3,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,1,2,1,2,3,0,0,3,3,3,2,2,3,3,3,3,3,1,3,3,0,3,3,1,0,3,3,3,3,3,0,0,3,3,3,0,0,0,0,3,3,3,3,3,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,1,0,0,2,0,0,0,0,0,0,2],
+[1,1,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,1,2,1,3,3,0,0,3,3,2,1,1,2,3,3,3,3,1,3,3,0,3,3,1,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,3,3,3,3,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,2,0,0,2,2,0,0,0,0,0,1],
+[1,1,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,1,1,1,2,2,0,0,2,2,2,1,1,2,2,2,2,2,1,2,2,0,2,2,1,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,1,1,1,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,1,0,0,2,1,0,0,0,0,0,1],
+[3,3,0,0,0,0,0,3,3,3,3,3,2,2,2,2,2,2,0,0,0,1,0,1,1,0,0,1,1,2,1,1,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,3,3,3,3,3,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,1,0,0,1,1,0,0,0,0,0,2],
+[3,3,0,0,0,0,0,3,3,3,3,3,2,2,2,2,2,2,0,0,1,1,1,1,2,0,0,1,2,2,1,1,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,3,3,3,3,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,1,0,0,2,2,0,0,0,0,0,1],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,2,1,2,2,3,3,3,3,3,3,3,0,0,0,0,0,2,0,0,0,0,0,0,0],
+[3,3,0,0,0,0,0,3,3,3,3,3,2,2,3,3,3,3,0,0,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,2,2,2,2,2,0,2,2,2,2,2,2,2,0,0,0,1,0,1,3,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,2,0,2,2,2,2,0,0,1,1,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,0,0,0,0,2,1,2,2,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,3,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,2,3,3,3,3,3,3,2,2,3,2,2,3,2,1,1,2,2,0,1,1,1,2,2,2,2,2,3,3,2,2,2,2,3,0,0,1,1,1,2,2,2,1,2,3,3,3,3,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,1,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,1,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,1,0,1,1,1,1,1,2,2,2,2,2,2,3,0,0,0,0,0,1,1,1,0,1,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,2,3,3,3,3,3,3,2,2,3,2,2,3,2,2,2,2,2,0,0,1,1,2,2,2,2,2,3,3,2,2,2,2,3,0,0,1,1,1,2,2,2,1,2,3,3,3,3,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,1,2,1,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,1,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,1,0,1,1,1,1,1,2,2,2,2,2,2,3,0,0,0,0,0,1,1,1,0,1,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,3,3,2,3,3,2,2,2,2,2,2,3,3,2,3,3,3,3,3,2,2,3,3,2,2,2,2,2,3,3,3,2,2,3,3,3,3,0,0,0,0,0,1,2,1,2,1,2,0,0,0,0,0,0,0,0,2,2,0,1,0,0,2,2,3,3,2,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,1,3,3,3,3,3,3,0,2,1,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,2,1,1,1,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,2,1,3,2,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,3,1,3,0,0,1,2,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,3,3,3,2,1,3,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,1,0,3,1,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,1,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,1,3,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,1,0,3,1,0,0,0],
+[0,0,0,0,0,0,0,0,0,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,3,3,3,2,2,3,3,3,3,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,3,1,3,2,0,0,0],
+[0,0,0,0,0,0,0,0,0,2,2,3,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,3,3,3,2,2,3,3,3,3,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,3,1,3,2,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,1,3,3,3,3,3,3,0,2,1,2,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,1,1,2,1,1,1,2,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,2,1,3,2,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,3,1,3,0,0,1,2,1,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,3,3,3,2,1,3,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,1,0,3,1,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,1,2,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,1,3,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,2,2,0,2,0,0,1,0,3,1,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,1,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,1,0,1,1,1,1,1,2,2,2,2,2,2,3,0,0,0,0,0,1,1,1,0,1,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,1,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,3,0,0,0,0,0,1,1,1,0,1,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,2,2,2,2,3,3,3,3,3,3,3,3,3,3,2,2,3,2,2,2,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,3,3,3,2,2,2,2,2,3,3,3,2,2,2,2,2,2,0,0,0,0,0,0,1,0,1,0,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,1,2,1,2,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,1,0,2,2,2,2,2,3,3,2,2,2,2,3,0,0,0,0,0,1,1,1,0,1,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,1,0,2,2,2,2,2,3,3,2,2,2,2,3,0,0,0,0,0,1,1,1,0,1,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,2,2,2,2,2,3,3,3,3,3,3,2,2,3,2,2,3,2,2,2,2,2,1,1,1,1,3,3,3,3,2,3,3,2,3,3,2,3,1,1,1,1,1,2,2,2,1,2,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,2,3,3,3,3,3,3,2,2,2,2,2,2,2,1,1,2,2,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,1,1,1,1,1,3,3,3,3,3,3,2,2,3,2,2,3,2,2,2,2,2,1,0,0,0,2,2,2,2,1,2,2,2,2,2,1,3,1,1,1,1,1,2,2,2,1,2,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,0,0,0,0,1,0],
+[0,0,0,0,0,0,0,0,0,1,1,2,3,3,3,3,3,3,2,2,3,2,2,3,2,2,2,2,2,0,0,0,0,2,2,2,2,2,3,3,2,2,2,2,3,0,0,0,0,0,2,2,2,1,2,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,3,2,3,3,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,1,1,0,0,3,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,3,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,0,0,0,3,2,3,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0],
+[2,2,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,2,1,2,2,2,0,0,2,2,2,1,1,2,2,2,2,2,1,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,3,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0],
+[2,2,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,0,0,2,2,2,1,1,2,2,2,2,2,1,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,3,2,3,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,1,1,2,2,2,3,3,3,3,3,3,2,2,3,2,2,3,2,2,2,2,2,0,0,0,1,2,2,2,2,2,3,3,2,2,2,2,3,0,0,1,1,1,2,2,2,1,2,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[2,2,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,2,1,2,2,2,0,0,2,2,2,1,1,2,2,2,2,2,1,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,2,1,1,1,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,3,2,3,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,2,2,3,3,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,3,3,3,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,2,1,0,1,1,0,0,0,0,0,0],
+[3,3,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,2,2,2,3,3,3,3,3,3,2,2,3,2,2,3,2,2,2,2,2,0,0,1,1,2,2,2,2,2,3,3,2,2,2,2,3,0,0,1,1,1,2,2,2,1,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[3,3,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,2,2,2,2,2,0,0,2,2,3,2,2,3,3,3,3,3,2,3,3,0,3,3,2,0,3,3,3,3,3,2,2,3,3,3,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,2,2,0,0,0,0,0,0],
+[3,3,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,2,2,2,2,2,0,0,2,2,2,1,1,2,2,2,2,2,1,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,3,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,2,2,2,2,2,3,2,2,3,2,2,2,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,1,1,1,2,2,2,1,2,2,2,2,2,0,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,2,3,2,2,3,2,1,1,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2,1,2,2,2,2,2,0,0,1,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,2,2,2,2,2,3,2,2,3,2,1,1,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,2,2,2,1,2,2,2,2,2,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,1,1,1,1,1,2,2,2,2,2,2,1,1,3,2,2,3,2,1,1,2,2,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,1,1,2,1,2,3,3,3,3,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,0,0,2,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,2,2,0,0,0,0,0,2,2,3,2,2,2,0,0,0,0,0,0,0,0,3,3,0,2,0,0,1,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,2,2,0,0,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,3,3,0,3,3,3,3,2,2,3,2,2,2,0,1,1,0,0,0,0,0,0,0,0,1,0,3,3,3,3,2,2,3,3,0,0,0,0,0,0,0,0,0,0,3,3,3,3,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,3,3,0,0,0,0,1,0,2,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,1,0,0,0,3,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,2,3,3,3,3,3,2,2,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,2,3,3,3,3,3,2,2,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,3,3,3,3,3,3,2,2,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0],
+[0,0,0,0,0,0,0,0,0,1,1,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,2,2,2,2,2,3,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,3,0],
+[2,2,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,3,0,0,0,0,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,0,1,0,0,0,0,0,0,0,3,0],
+[1,1,0,0,0,0,0,1,1,2,2,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,0,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,2,2,2,2,2,2,0,2,2,2,2,2,2,2,0,0,0,1,0,0,0,0,0,0,0,3,0],
+[3,3,0,0,0,0,0,3,3,3,3,3,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,2,1,1,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,3,1,1,1,2,2,2,2,2,2,1,0,2,2,2,2,2,2,2,0,0,0,1,0,1,0,0,0,0,0,0,0],
+[2,2,0,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,1,1,0,1,1,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,2,0,0,0,0,2,2,2,2,2,2,0,2,2,2,2,2,2,2,0,0,0,2,0,1,0,0,0,0,0,3,0],
+[3,3,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,0,0,0,1,0,1,1,0,0,1,1,2,1,1,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,3,1,1,1,2,3,2,3,2,2,2,0,3,3,3,3,3,3,3,0,0,0,1,1,2,0,0,0,0,0,0,2],
+[3,3,0,0,0,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0,2,1,1,2,2,2,2,2,0,2,2,0,2,2,0,0,2,2,2,2,2,0,0,2,2,2,0,0,0,0,3,1,1,1,2,2,2,2,2,2,2,0,3,3,3,3,3,3,3,0,0,0,1,0,1,0,0,0,0,0,3,1],
+];
+
+/* =====================================================================
+   CONFIG
+===================================================================== */
+const SOURCES=[
+  {id:'all',l:'All Sources',ico:'🌐'},
+  {id:'cap',l:'CAP',ico:'🫁'},
+  {id:'hap',l:'HAP/VAP',ico:'🏥'},
+  {id:'uti',l:'UTI',ico:'💧'},
+  {id:'bact',l:'Bacteremia',ico:'🩸'},
+  {id:'mening',l:'Meningitis',ico:'🧠'},
+  {id:'iab',l:'Intra-abd',ico:'🫀'},
+  {id:'ssti',l:'SSTI',ico:'🩹'},
+  {id:'osteo',l:'Osteomyelitis',ico:'🦴'},
+  {id:'endo',l:'Endocarditis',ico:'❤️'},
+  {id:'sti',l:'STI',ico:'💊'},
+  {id:'zoo',l:'Zoonoses',ico:'🐾'},
+];
+const CATS=[
+  {id:'gpc',l:'GPC',title:'Aerobic Gram+ Cocci'},
+  {id:'gpb',l:'GP Bacilli',title:'Aerobic Gram+ Bacilli'},
+  {id:'gne',l:'Enterobacterales',title:'GN Enterobacterales'},
+  {id:'gnn',l:'GN Non-Entero',title:'GN Non-Enterobacterales'},
+  {id:'nf',l:'Non-Fermenters',title:'Non-Fermenting GNB'},
+  {id:'atyp',l:'Atypicals',title:'Cell-wall Deficient/Atypicals'},
+  {id:'an',l:'Anaerobes',title:'Anaerobes'},
+];
+const CAT_COL={gpc:'#a78bfa',gpb:'#c084fc',gne:'#38bdf8',gnn:'#22d3ee',nf:'#f87171',atyp:'#fbbf24',an:'#fb7185'};
+const GRP_NAMES={gpc:'Aerobic Gram Positive Cocci',gpb:'Aerobic Gram Positive Bacilli',gne:'Aerobic GN – Enterobacterales',gnn:'Aerobic GN – Non-Enterobacterales',nf:'GN Non-Fermenters',atyp:'Cell-wall Deficient / Atypicals',an:'Anaerobes'};
+const SYM={3:'++',2:'+',1:'±',0:''};
+const CV={3:'v3',2:'v2',1:'v1',0:'v0'};
+const CS={3:'s3',2:'s2',1:'s1',0:'s0'};
+
+const PRESETS=[
+  {n:'Broad Sepsis',a:[11,16,71]},
+  {n:'CAP Standard',a:[36,61]},
+  {n:'CAP Severe',a:[16,36,23]},
+  {n:'HAP / VAP',a:[11,38,71]},
+  {n:'UTI Oral',a:[84,85,87]},
+  {n:'MRSA Cover',a:[71,76,70]},
+  {n:'MDR-GN (KPC)',a:[40,44,16]},
+  {n:'MDR-GN (MBL)',a:[19,44]},
+  {n:'Intra-abd',a:[11,89]},
+  {n:'Atypicals',a:[61,64,23]},
+  {n:'Anaerobes',a:[89,59,11]},
+  {n:'Endocarditis',a:[71,11,70]},
+];
+
+/* Empiric recommendations by source */
+const RECS={
+  all:[
+    {tier:1,name:'Broad-spectrum Sepsis',abx:[11,16,71],notes:'Pip-Tazo + Meropenem + Vancomycin. Reserve dual carbapenem for extreme MDR risk. Consider de-escalation upon culture results.',miss:['E. faecium (VRE)','A. baumannii','S. maltophilia']},
+    {tier:1,name:'Community Sepsis Empiric',abx:[11,71],notes:'Pip-Tazo + Vancomycin. Appropriate for most community-acquired sepsis with Gram+ and Gram- coverage.',miss:['S. maltophilia','VRE','MDR organisms']},
+    {tier:2,name:'ICU Broad Cover',abx:[16,71,20],notes:'Meropenem + Vancomycin + Ciprofloxacin. Use when MDR Gram-negatives suspected.',miss:['VRE','MBL-producers']},
+  ],
+  cap:[
+    {tier:1,name:'CAP Standard (IDSA)',abx:[36,61],notes:'Ceftriaxone + Azithromycin. Covers S. pneumoniae, atypicals, H. influenzae. First-line for non-severe CAP requiring hospitalisation.',miss:['MRSA','P. aeruginosa','Legionella (partial)']},
+    {tier:1,name:'CAP Monotherapy (FQ)',abx:[23],notes:'Levofloxacin monotherapy. Covers pneumococcus including penicillin-resistant strains + atypicals. Avoid if recent FQ use.',miss:['MRSA','P. aeruginosa']},
+    {tier:2,name:'Severe CAP / ICU',abx:[16,36,23],notes:'Beta-lactam + respiratory FQ ± carbapenem. Add Vancomycin/Linezolid if MRSA-CAP risk (necrotising, haemoptysis, cavitation).',miss:['MRSA (add Vanco)']},
+  ],
+  hap:[
+    {tier:1,name:'HAP Standard',abx:[11,38,71],notes:'Pip-Tazo + Cefepime + Vancomycin. Covers Pseudomonas, MRSA, Gram-negatives. Appropriate for most HAP without MDR risk factors.',miss:['ESBL/KPC (escalate)','S. maltophilia']},
+    {tier:2,name:'HAP with MDR Risk',abx:[16,71],notes:'Meropenem + Vancomycin. For late-onset HAP, prior broad-spectrum ABX, or prior MDR isolation.',miss:['MBL-producers','VRE','S. maltophilia']},
+    {tier:3,name:'Extreme MDR (XDR)',abx:[44,78,71,84],notes:'Cefiderocol + Polymyxin B + Vancomycin + TMP-SMX. Escalation regimen for pan-resistant organisms. Specialist input required.',miss:[]},
+  ],
+  uti:[
+    {tier:1,name:'Uncomplicated UTI (Oral)',abx:[85,84,87],notes:'Nitrofurantoin / TMP-SMX / Fosfomycin. First-line for uncomplicated cystitis. Nitrofurantoin avoid in pyelonephritis (poor tissue levels).',miss:['Klebsiella (ESBL)']},
+    {tier:1,name:'Complicated UTI / Pyeloneph',abx:[20,36],notes:'Ciprofloxacin or Ceftriaxone. For complicated UTI, pyelonephritis, or when oral therapy fails.',miss:['ESBL organisms','VRE','Enterococcus']},
+    {tier:2,name:'UTI with ESBL Risk',abx:[13],notes:'Ertapenem. Preferred for ESBL-producing E. coli/Klebsiella UTI. Avoids unnecessary broad Gram+ cover.',miss:['Enterococcus','P. aeruginosa']},
+  ],
+  bact:[
+    {tier:1,name:'Septicaemia Empiric',abx:[11,71],notes:'Pip-Tazo + Vancomycin. Broad empiric cover for bacteraemia of unknown source. De-escalate when cultures available.',miss:['VRE','MDR-GNB']},
+    {tier:2,name:'Septicaemia MDR Risk',abx:[16,71],notes:'Meropenem + Vancomycin. For healthcare-associated bacteraemia, immunocompromised, or prior MDR exposure.',miss:['VRE','MBL','S. maltophilia']},
+  ],
+  mening:[
+    {tier:1,name:'Bacterial Meningitis (Adult)',abx:[36,71,7],notes:'Ceftriaxone + Vancomycin + Ampicillin (for Listeria). Cover N. meningitidis, S. pneumoniae (incl. PCN-resistant), L. monocytogenes.',miss:['L. monocytogenes (add Amp)','Gram-negatives (unusual)']},
+    {tier:2,name:'Meningitis MDR / Post-surgical',abx:[16,71],notes:'Meropenem + Vancomycin. For post-neurosurgical/CSF shunt meningitis with Gram-negative or nosocomial organisms.',miss:['Listeria (add Amp)']},
+  ],
+  iab:[
+    {tier:1,name:'Intra-abd Standard',abx:[11,89],notes:'Pip-Tazo + Metronidazole. Provides Gram-negative, Gram-positive, and anaerobic (especially B. fragilis) coverage.',miss:['Enterococcus (mild)','MDR-GNB']},
+    {tier:1,name:'Intra-abd Alternative',abx:[36,89],notes:'Ceftriaxone + Metronidazole. Step-down option for mild-moderate intra-abdominal infection.',miss:['P. aeruginosa','Enterococcus']},
+    {tier:2,name:'Severe / Peritonitis MDR',abx:[16,89,0],notes:'Meropenem + Metronidazole ± Penicillin G (Enterococcus). For severe peritonitis with MDR risk.',miss:['VRE','MBL producers']},
+  ],
+  ssti:[
+    {tier:1,name:'Non-purulent Cellulitis',abx:[29],notes:'Cefazolin (or oral Cephalexin). Targets Strep. pyogenes and MSSA. Not appropriate if MRSA suspected.',miss:['MRSA','P. aeruginosa']},
+    {tier:1,name:'Purulent / MRSA Risk',abx:[71],notes:'Vancomycin IV (or oral TMP-SMX/Doxycycline for mild). Cover MRSA, Strep. pyogenes.',miss:['Gram-negatives','Anaerobes (necrotising)']},
+    {tier:2,name:'Necrotising Fasciitis',abx:[11,71,59],notes:'Pip-Tazo + Vancomycin + Clindamycin. Broad cover + Clindamycin for toxin suppression in Strep/Staph. Urgent surgical debridement essential.',miss:['MDR-GNB (rare)']},
+  ],
+  osteo:[
+    {tier:1,name:'Osteomyelitis (MSSA)',abx:[29],notes:'Cefazolin IV → Oral Cephalexin. Definitive MSSA osteomyelitis after cultures. Long course (4-6 weeks).',miss:['MRSA','Gram-negatives']},
+    {tier:2,name:'Osteomyelitis (MRSA)',abx:[71],notes:'Vancomycin. Target trough/AUC. Can step down to oral Linezolid or TMP-SMX for MRSA osteomyelitis.',miss:['Gram-negatives']},
+    {tier:2,name:'Vertebral / Mixed',abx:[36,71],notes:'Ceftriaxone + Vancomycin. Empiric for vertebral osteomyelitis or mixed aetiology pending cultures.',miss:['Anaerobes (dental/oral)','ESBL']},
+  ],
+  endo:[
+    {tier:1,name:'Native Valve (Community)',abx:[71,11],notes:'Vancomycin + Pip-Tazo. Empiric before cultures. Covers MRSA, MSSA, Streptococci, Enterococcus, Gram-negatives.',miss:['VRE (rare)','HACEK (culture first)']},
+    {tier:1,name:'MSSA Native Valve',abx:[2,55],notes:'Nafcillin + Gentamicin (synergy). Definitive MSSA endocarditis. Avoid Vancomycin if MSSA confirmed (inferior outcomes).',miss:['MRSA','Enterococcus']},
+    {tier:2,name:'Enterococcal Endocarditis',abx:[7,36],notes:'Ampicillin + Ceftriaxone. Double beta-lactam preferred over Amp+Gent for aminoglycoside-resistant enterococci.',miss:['VRE','MRSA']},
+  ],
+  sti:[
+    {tier:1,name:'Gonorrhoea + Chlamydia',abx:[36,61],notes:'Ceftriaxone IM + Azithromycin. Standard dual therapy for uncomplicated GC+CT coinfection.',miss:['Herpes (antiviral)','Syphilis (Pen G)']},
+    {tier:1,name:'Chlamydia Monotherapy',abx:[64],notes:'Doxycycline 100mg BD × 7 days. First-line for uncomplicated chlamydia. Also covers M. genitalium.',miss:['Gonorrhoea','BV/Trichomonas']},
+  ],
+  zoo:[
+    {tier:1,name:'Tick-borne (Rickettsial)',abx:[64],notes:'Doxycycline. Drug of choice for RMSF, Ehrlichiosis, Anaplasmosis. Start empirically; do not wait for serology.',miss:['Brucella (needs combo)']},
+    {tier:1,name:'Brucellosis',abx:[64,83],notes:'Doxycycline + Rifampicin (6 weeks). Standard regimen for brucellosis. Alternative: Doxy + Streptomycin.',miss:['Tularaemia (AG needed)']},
+    {tier:2,name:'Zoonotic Broad Cover',abx:[64,20],notes:'Doxycycline + Ciprofloxacin. Covers most zoonotic bacteria including Bartonella, Brucella, F. tularensis.',miss:['Rabies (PEP only)','Leptospira (Pen G/Cef)']},
+  ],
+};
+
+/* =====================================================================
+   STATE
+===================================================================== */
+let selAbx=new Set(ABX.map((_,i)=>i).filter(i=>ABX[i].def));
+let curSrc='all';
+let activeCats=new Set(CATS.map(c=>c.id));
+let dispMode='ind';
+let selOrg=null;
+let curTab='analysis';
+
+/* =====================================================================
+   INIT
+===================================================================== */
+function init(){
+  buildSrcBar();buildSidebar();buildCatRow();buildPresets();renderAll();
+}
+
+function buildSrcBar(){
+  const bar=document.getElementById('srcBar');
+  SOURCES.forEach(s=>{
+    const b=document.createElement('button');
+    b.className='src-btn'+(s.id===curSrc?' active':'');
+    b.innerHTML=`<span class="src-ico">${s.ico}</span>${s.l}`;
+    b.onclick=()=>{
+      curSrc=s.id;
+      document.querySelectorAll('.src-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      selOrg=null;
+      renderAll();
+    };
+    bar.appendChild(b);
+  });
+}
+
+function buildSidebar(){
+  const div=document.getElementById('abxSB');
+  const classes=[...new Set(ABX.map(a=>a.cls))];
+  classes.forEach(cls=>{
+    const id=cls.replace(/[^a-zA-Z0-9]/g,'_');
+    const grp=document.createElement('div');
+    grp.className='cg';
+    grp.innerHTML=`<div class="cg-h">
+      <span class="chev">▾</span>
+      <span class="cg-name">${cls}</span>
+      <div class="cg-acts">
+        <button class="cga" onclick="clsSel(event,'${cls}',1)">+all</button>
+        <button class="cga cgn" onclick="clsSel(event,'${cls}',0)">−all</button>
+      </div>
+    </div>
+    <div class="cg-items" id="ci_${id}"></div>`;
+    grp.querySelector('.cg-h').addEventListener('click',e=>{
+      if(e.target.closest('.cg-acts'))return;
+      grp.classList.toggle('col');
+    });
+    div.appendChild(grp);
+    const cont=grp.querySelector('.cg-items');
+    ABX.forEach((_,i)=>{
+      if(ABX[i].cls!==cls)return;
+      const row=document.createElement('label');
+      row.className='ai';
+      row.innerHTML=`<input type="checkbox" id="abx${i}"${selAbx.has(i)?' checked':''}><span class="al">${ABX[i].n}</span><span class="ar">${ABX[i].ro}</span>`;
+      row.querySelector('input').onchange=e=>{
+        if(e.target.checked)selAbx.add(i);else selAbx.delete(i);
+        renderAll();
+      };
+      cont.appendChild(row);
+    });
+  });
+}
+
+function clsSel(e,cls,on){
+  e.stopPropagation();
+  ABX.forEach((_,i)=>{
+    if(ABX[i].cls===cls){
+      const c=document.getElementById('abx'+i);
+      if(c){c.checked=!!on;on?selAbx.add(i):selAbx.delete(i);}
+    }
+  });
+  renderAll();
+}
+function selAll(){ABX.forEach((_,i)=>{selAbx.add(i);const c=document.getElementById('abx'+i);if(c)c.checked=true;});renderAll();}
+function selNone(){selAbx.clear();ABX.forEach((_,i)=>{const c=document.getElementById('abx'+i);if(c)c.checked=false;});renderAll();}
+
+function buildCatRow(){
+  const row=document.getElementById('catRow');
+  const all=document.createElement('button');
+  all.className='cat-btn on';all.textContent='All';
+  all.onclick=()=>{CATS.forEach(c=>activeCats.add(c.id));document.querySelectorAll('.cat-btn[data-c]').forEach(b=>b.classList.add('on'));renderAll();};
+  row.appendChild(all);
+  CATS.forEach(cat=>{
+    const b=document.createElement('button');
+    b.className='cat-btn on';b.setAttribute('data-c',cat.c||cat.id);b.title=cat.title;
+    b.setAttribute('data-c',cat.id);b.textContent=cat.l;
+    b.onclick=()=>{
+      if(activeCats.has(cat.id))activeCats.delete(cat.id);else activeCats.add(cat.id);
+      b.classList.toggle('on',activeCats.has(cat.id));
+      renderAll();
+    };
+    row.appendChild(b);
+  });
+}
+
+function buildPresets(){
+  const grid=document.getElementById('preGrid');
+  PRESETS.forEach(p=>{
+    const b=document.createElement('button');
+    b.className='pb';b.textContent=p.n;
+    b.onclick=()=>{
+      selAbx.clear();
+      ABX.forEach((_,i)=>{const c=document.getElementById('abx'+i);if(c)c.checked=false;});
+      p.a.forEach(i=>{selAbx.add(i);const c=document.getElementById('abx'+i);if(c)c.checked=true;});
+      renderAll();
+    };
+    grid.appendChild(b);
+  });
+}
+
+function setMode(m){
+  dispMode=m;
+  document.getElementById('mInd').classList.toggle('on',m==='ind');
+  document.getElementById('mCmb').classList.toggle('on',m==='comb');
+  renderAll();
+}
+
+function showTab(t){
+  curTab=t;
+  document.querySelectorAll('.rp-tab').forEach(x=>x.classList.remove('on'));
+  document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1)).classList.add('on');
+  renderPanel();
+}
+
+/* =====================================================================
+   COMPUTE COVERAGE STATS
+===================================================================== */
+function getVisibleOrgs(){
+  const srch=(document.getElementById('srch')||{value:''}).value.toLowerCase();
+  return ORGS.map((o,i)=>({o,i})).filter(({o})=>
+    activeCats.has(o.c) &&
+    (curSrc==='all'||o.s.includes(curSrc)) &&
+    (!srch||o.n.toLowerCase().includes(srch))
+  );
+}
+
+function getBestCov(orgIdx,abxList){
+  if(!abxList.length)return 0;
+  return Math.max(0,...abxList.map(a=>COV[orgIdx][a]));
+}
+
+function computeGaps(){
+  const abxList=[...selAbx].sort((a,b)=>a-b);
+  const visible=getVisibleOrgs();
+  const gaps=[],variable=[],covered=[];
+  visible.forEach(({o,i})=>{
+    const best=getBestCov(i,abxList);
+    if(best===0)gaps.push({o,i});
+    else if(best===1)variable.push({o,i});
+    else covered.push({o,i});
+  });
+  return{gaps,variable,covered,total:visible.length};
+}
+
+/* =====================================================================
+   RENDER TABLE
+===================================================================== */
+function renderTable(){
+  const srch=(document.getElementById('srch')||{value:''}).value.toLowerCase();
+  const abxList=[...selAbx].sort((a,b)=>a-b);
+  const tbl=document.getElementById('tbl');
+  let h='';
+
+  // HEAD
+  h+='<thead><tr>';
+  if(dispMode==='comb'){
+    h+=`<th class="corner"><div class="corner-in">Organism → Best Combined</div></th>`;
+    h+=`<th class="ath on" style="width:50px"><div class="ath-in" style="width:120px">Best Coverage</div></th>`;
+    h+=`<th class="ath" style="width:60px"><div class="ath-in" style="width:120px">% ABX Active</div></th>`;
+  } else {
+    h+=`<th class="corner"><div class="corner-in">Organism → Antibiotic Coverage</div></th>`;
+    abxList.forEach(i=>{
+      h+=`<th class="ath on" title="${ABX[i].cls} | ${ABX[i].ro}" onclick="hlAbx(${i})"><div class="ath-in">${ABX[i].n}</div></th>`;
+    });
+    if(abxList.length) h+=`<th class="ath" style="min-width:50px"><div class="ath-in" style="color:var(--txd)">Score</div></th>`;
+  }
+  h+='</tr></thead><tbody>';
+
+  let prevCat='',shown=0,covered=0;
+  ORGS.forEach((org,oi)=>{
+    if(!activeCats.has(org.c))return;
+    if(curSrc!=='all'&&!org.s.includes(curSrc))return;
+    if(srch&&!org.n.toLowerCase().includes(srch))return;
+    shown++;
+
+    if(org.c!==prevCat){
+      h+=`<tr class="gh"><td colspan="999" style="color:${CAT_COL[org.c]}">${GRP_NAMES[org.c]}</td></tr>`;
+      prevCat=org.c;
+    }
+
+    const srcMatch=curSrc!=='all'&&org.s.includes(curSrc);
+    const isSel=selOrg===oi;
+    const dot=`<span class="odot" style="background:${CAT_COL[org.c]}"></span>`;
+    const critTag=org.crit?`<span style="font-size:6px;background:rgba(224,80,80,.15);color:var(--danger);padding:1px 3px;border-radius:2px;margin-left:2px">MDR</span>`:'';
+    const covCount=abxList.filter(a=>COV[oi][a]>=2).length;
+    const pct=abxList.length?Math.round(covCount/abxList.length*100):0;
+    const bestCov=getBestCov(oi,abxList);
+    if(bestCov>=2)covered++;
+
+    let scoreClass='';
+    if(!abxList.length)scoreClass='';
+    else if(pct>=75)scoreClass='s-high';
+    else if(pct>=40)scoreClass='s-med';
+    else if(pct>0)scoreClass='s-low';
+    else scoreClass='s-none';
+
+    const barColor=pct>=75?'var(--ac)':pct>=40?'var(--c2t)':pct>0?'var(--c1t)':'var(--danger)';
+
+    h+=`<tr class="or${isSel?' sel':''}" onclick="selectOrg(${oi})">`;
+    h+=`<td class="oc"><div class="oi">${dot}<span class="onm${srcMatch?' sm':''}">${org.n}</span>${critTag}`;
+    if(abxList.length) h+=`<span class="oscore ${scoreClass}">${pct}%</span>`;
+    h+=`</div></td>`;
+
+    if(dispMode==='comb'){
+      h+=`<td class="cc ${CV[bestCov]}" title="${SYM[bestCov]||'Inactive'}"><span class="${CS[bestCov]}">${SYM[bestCov]}</span></td>`;
+      h+=`<td class="sc"><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${barColor}"></div></div></td>`;
+    } else {
+      abxList.forEach(a=>{
+        const v=COV[oi][a];
+        h+=`<td class="cc ${CV[v]}${isSel?' hl':''}" title="${ABX[a].n}: ${SYM[v]||'Inactive'}"><span class="${CS[v]}">${SYM[v]}</span></td>`;
+      });
+      if(abxList.length) h+=`<td class="sc"><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${barColor}"></div></div></td>`;
+    }
+    h+='</tr>';
+  });
+
+  h+='</tbody>';
+  tbl.innerHTML=h;
+
+  document.getElementById('stA').textContent=selAbx.size;
+  document.getElementById('stO').textContent=shown;
+  document.getElementById('stC').textContent=covered;
+}
+
+/* =====================================================================
+   SELECT ORGANISM
+===================================================================== */
+function selectOrg(idx){
+  selOrg=selOrg===idx?null:idx;
+  renderTable();
+  if(selOrg!==null){
+    curTab='det';
+    document.querySelectorAll('.rp-tab').forEach(x=>x.classList.remove('on'));
+    document.getElementById('tabDet').classList.add('on');
+  }
+  renderPanel();
+}
+
+function hlAbx(i){
+  // Highlight column - could expand in future
+}
+
+/* =====================================================================
+   RENDER RIGHT PANEL
+===================================================================== */
+function renderPanel(){
+  const abxList=[...selAbx].sort((a,b)=>a-b);
+  const body=document.getElementById('rpBody');
+  if(curTab==='analysis') renderAnalysis(body,abxList);
+  else if(curTab==='rec') renderRec(body);
+  else renderDetails(body,abxList);
+}
+
+function renderAnalysis(body,abxList){
+  const{gaps,variable,covered,total}=computeGaps();
+  const gapBadge=document.getElementById('gapBadge');
+  const critGaps=gaps.filter(({o})=>o.crit);
+  gapBadge.textContent=gaps.length+variable.length;
+  gapBadge.style.background=gaps.length>0?'var(--danger)':variable.length>0?'var(--warn)':'var(--ac)';
+
+  if(!abxList.length){
+    body.innerHTML=`<div class="no-abx">Select antibiotics to analyse coverage gaps.</div>`;
+    return;
+  }
+
+  const covPct=total?Math.round(covered.length/total*100):0;
+  const varPct=total?Math.round(variable.length/total*100):0;
+  const gapPct=total?Math.round(gaps.length/total*100):0;
+
+  let h='';
+
+  // Summary ring
+  h+=`<div class="cov-ring">
+    <div class="ring-stat"><div class="ring-num" style="color:var(--ac)">${covered.length}</div><div class="ring-lbl">Covered<br>++/+</div></div>
+    <div class="ring-div"></div>
+    <div class="ring-stat"><div class="ring-num" style="color:var(--c1t)">${variable.length}</div><div class="ring-lbl">Variable<br>±</div></div>
+    <div class="ring-div"></div>
+    <div class="ring-stat"><div class="ring-num" style="color:var(--danger)">${gaps.length}</div><div class="ring-lbl">Not<br>Covered</div></div>
+    <div class="ring-div"></div>
+    <div class="ring-stat"><div class="ring-num" style="color:var(--tx)">${total}</div><div class="ring-lbl">Total<br>Shown</div></div>
+  </div>`;
+
+  // Bar
+  h+=`<div class="cov-bar-full">
+    <div class="cov-bar-seg" style="width:${covPct}%;background:var(--ac)"></div>
+    <div class="cov-bar-seg" style="width:${varPct}%;background:var(--c1t)"></div>
+    <div class="cov-bar-seg" style="width:${gapPct}%;background:var(--danger)"></div>
+  </div>
+  <div class="cov-legend">
+    <div class="cl-item"><div class="cl-dot" style="background:var(--ac)"></div><span style="color:var(--txm)">Covered (${covPct}%)</span></div>
+    <div class="cl-item"><div class="cl-dot" style="background:var(--c1t)"></div><span style="color:var(--txm)">Variable (${varPct}%)</span></div>
+    <div class="cl-item"><div class="cl-dot" style="background:var(--danger)"></div><span style="color:var(--txm)">Gap (${gapPct}%)</span></div>
+  </div>`;
+
+  // Critical gaps banner
+  if(critGaps.length>0){
+    h+=`<div class="critical-banner"><div class="cb-title">⚠ Critical MDR Gaps (${critGaps.length})</div><div class="cb-list">`;
+    critGaps.forEach(({o})=>{
+      h+=`<div class="cb-item"><div class="cb-dot"></div>${o.n}</div>`;
+    });
+    h+=`</div></div>`;
+  }
+
+  // Not covered
+  if(gaps.length>0){
+    h+=`<div class="section-hdr">Not Covered (${gaps.length})</div>`;
+    gaps.forEach(({o,i})=>{
+      // Find best available ABX for this org
+      const bestAbx=ABX.map((_,ai)=>({ai,v:COV[i][ai]})).filter(x=>x.v>=2).sort((a,b)=>b.v-a.v);
+      const suggest=bestAbx.length?ABX[bestAbx[0].ai].n:'—';
+      h+=`<div class="gap-item" onclick="selectOrg(${i})">
+        <div class="gap-dot" style="background:${CAT_COL[o.c]}"></div>
+        <span class="gap-name">${o.n}</span>
+        ${o.crit?`<span class="gap-crit">MDR risk</span>`:''}
+        <span class="gap-best" title="Best available ABX">→${suggest}</span>
+      </div>`;
+    });
+  }
+
+  // Variable coverage
+  if(variable.length>0){
+    h+=`<div class="section-hdr">Variable Coverage (${variable.length})</div>`;
+    variable.forEach(({o,i})=>{
+      h+=`<div class="gap-item" onclick="selectOrg(${i})">
+        <div class="gap-dot" style="background:${CAT_COL[o.c]}"></div>
+        <span class="gap-name">${o.n}</span>
+        <span class="gap-var">± variable</span>
+      </div>`;
+    });
+  }
+
+  if(gaps.length===0&&variable.length===0){
+    h+=`<div class="no-gaps">✓ All visible organisms covered by current selection.</div>`;
+  }
+
+  body.innerHTML=h;
+}
+
+function renderRec(body){
+  const src=curSrc;
+  const recs=RECS[src]||RECS['all'];
+  const srcLabel=SOURCES.find(s=>s.id===src)?.l||'All Sources';
+
+  let h=`<div class="rec-source">Showing empiric recommendations for: <strong style="color:var(--ac)">${srcLabel}</strong></div>`;
+
+  const tiers={1:'⭐ First-line',2:'⚡ Alternative',3:'🔴 Escalation'};
+  const tierCls={1:'tier-1',2:'tier-2',3:'tier-3'};
+
+  recs.forEach(rec=>{
+    const abxNames=rec.abx.map(i=>ABX[i]?.n||'?');
+    // Compute coverage for this regimen vs visible orgs
+    const visible=getVisibleOrgs();
+    const covered=visible.filter(({o,i})=>rec.abx.some(a=>COV[i][a]>=2)).length;
+    const missing=visible.filter(({o,i})=>!rec.abx.some(a=>COV[i][a]>=2)).map(({o})=>o.n);
+    const covPct=visible.length?Math.round(covered/visible.length*100):0;
+
+    h+=`<div class="rec-card">
+      <div class="rec-tier ${tierCls[rec.tier]||'tier-1'}">${tiers[rec.tier]||'First-line'} · ${covPct}% visible orgs covered</div>
+      <div class="rec-name">${rec.name}</div>
+      <div class="rec-abx">${abxNames.map(n=>`<span class="rec-abx-chip">${n}</span>`).join('')}</div>
+      <div class="rec-notes">${rec.notes}</div>
+      ${missing.length?`<div style="margin:4px 0 2px;font-size:7px;color:var(--txd)">Possible gaps vs current filter:</div>
+      <div class="rec-cov-row">${missing.slice(0,6).map(n=>`<span class="rec-cov-pill pill-miss">${n}</span>`).join('')}${missing.length>6?`<span class="rec-cov-pill pill-miss">+${missing.length-6} more</span>`:''}</div>`:'<div style="font-size:7px;color:var(--c3t);margin:4px 0">✓ Covers all visible organisms</div>'}
+      <button class="rec-apply" onclick="applyRec([${rec.abx.join(',')}])">▶ Apply This Regimen</button>
+    </div>`;
+  });
+
+  body.innerHTML=h;
+}
+
+function applyRec(abxArr){
+  selAbx.clear();
+  ABX.forEach((_,i)=>{const c=document.getElementById('abx'+i);if(c)c.checked=false;});
+  abxArr.forEach(i=>{selAbx.add(i);const c=document.getElementById('abx'+i);if(c)c.checked=true;});
+  renderAll();
+  showTab('analysis');
+}
+
+function renderDetails(body,abxList){
+  if(selOrg===null){
+    body.innerHTML=`<div class="det-empty">Click any organism in the matrix to inspect its full antibiotic coverage profile.</div>`;
+    return;
+  }
+  const org=ORGS[selOrg];
+  const catColor=CAT_COL[org.c];
+  const catName=GRP_NAMES[org.c];
+
+  // Group ABX by coverage level
+  const byLevel={3:[],2:[],1:[],0:[]};
+  ABX.forEach((_,i)=>{byLevel[COV[selOrg][i]].push(i);});
+
+  let h=`<div class="det-org-hdr">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span class="odot" style="background:${catColor};width:8px;height:8px"></span>
+      <div class="det-org-name">${org.n}</div>
+    </div>
+    <div style="margin-top:4px"><span class="det-cat-badge" style="background:${catColor}22;color:${catColor};border:1px solid ${catColor}44">${catName}</span>
+    ${org.crit?`<span class="det-cat-badge" style="background:rgba(224,80,80,.15);color:var(--danger);border:1px solid rgba(224,80,80,.3);margin-left:4px">MDR Risk Organism</span>`:''}
+    </div>
+    <div style="margin-top:5px;font-size:7.5px;color:var(--txm)">Infection sources: ${org.s.filter(s=>s!=='all').join(' · ')||'General'}</div>
+  </div>`;
+
+  const levels=[{v:3,label:'Highly Active (++)',bg:'var(--c3b)',col:'var(--c3t)'},{v:2,label:'Active (+)',bg:'var(--c2b)',col:'var(--c2t)'},{v:1,label:'Variable (±)',bg:'var(--c1b)',col:'var(--c1t)'}];
+  levels.forEach(lv=>{
+    if(!byLevel[lv.v].length)return;
+    // Filter to show selected ABX highlighted, rest dimmed
+    h+=`<div class="section-hdr" style="color:${lv.col}">${lv.label} <span style="color:var(--txd)">(${byLevel[lv.v].length})</span></div>`;
+    byLevel[lv.v].forEach(i=>{
+      const isSel=selAbx.has(i);
+      h+=`<div class="det-abx-item" style="background:${isSel?lv.bg:'transparent'};border-radius:3px" onclick="toggleAbxFromDet(${i})">
+        <span class="det-abx-name" style="${isSel?`color:${lv.col}`:''}">${ABX[i].n}</span>
+        <span class="det-abx-class">${ABX[i].cls}</span>
+        <span class="det-cov-badge" style="background:${lv.bg};color:${lv.col}">${SYM[lv.v]}</span>
+        ${isSel?`<span style="font-size:7px;color:var(--ac)">✓</span>`:`<span style="font-size:7px;color:var(--txd)">+ add</span>`}
+      </div>`;
+    });
+  });
+
+  if(byLevel[0].length){
+    h+=`<div class="section-hdr">Inactive (${byLevel[0].length})</div>`;
+    h+=`<div style="font-size:8px;color:var(--txd);padding:4px 6px;font-style:italic">${byLevel[0].map(i=>ABX[i].n).join(', ')}</div>`;
+  }
+
+  body.innerHTML=h;
+}
+
+function toggleAbxFromDet(i){
+  const cb=document.getElementById('abx'+i);
+  if(selAbx.has(i)){selAbx.delete(i);if(cb)cb.checked=false;}
+  else{selAbx.add(i);if(cb)cb.checked=true;}
+  renderAll();
+}
+
+/* =====================================================================
+   MAIN RENDER
+===================================================================== */
+function renderAll(){
+  renderTable();
+  renderPanel();
+}
+
+init();
+</script>
+</body>
+</html>
