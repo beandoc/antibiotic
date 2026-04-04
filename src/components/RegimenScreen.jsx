@@ -39,7 +39,8 @@ export function RegimenScreen({ source, recommendations, riskModifiers, activeSl
                    <div className="regimen-abx-chips">
                       {r.abx.map(id => {
                         // ALWAYS search by string ID to prevent number/string mismatch breaking the UI
-                        const name = ANTIBIOTICS.find(a => String(a.id) === String(id))?.name || id;
+                        const cleanId = String(id).replace('abx_', '');
+                        const name = ANTIBIOTICS.find(a => String(a.id) === String(id) || String(a.id) === `abx_${cleanId}`)?.name || id;
                         return <div key={id} className="abx-chip">{name}</div>;
                       })}
                    </div>

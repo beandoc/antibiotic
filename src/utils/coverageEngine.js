@@ -3,7 +3,8 @@ import { ANTIBIOTICS } from '../data';
 export const getCoverage = (targetOrgId, abxIds) => {
   if (!abxIds || abxIds.length === 0) return 0;
   return Math.max(...abxIds.map(id => {
-    const abx = ANTIBIOTICS.find(a => String(a.id) === String(id));
+    const cleanId = String(id).replace('abx_', '');
+    const abx = ANTIBIOTICS.find(a => String(a.id) === String(id) || String(a.id) === `abx_${cleanId}`);
     return (abx && abx.coverage) ? abx.coverage[targetOrgId] || 0 : 0;
   }));
 };
