@@ -87,11 +87,25 @@ export function ScenarioAdvisor({
 
   /**
    * Logic Fix (Bug 1): Always show all relevant pathogens for a source.
+   * Optimization: Filter fungal organisms for Undifferentiated source unless specifically suspected.
    */
+  const isFungalSuspected = riskModifiers.has('Suspected Fungal');
+
   const baselineOrgIds = useMemo(() => {
     const id = sourceId || 'all';
-    return ALL_ORGS.filter(o => (o.sources || []).includes(id)).map(o => o.id);
-  }, [sourceId, ALL_ORGS]);
+    return ALL_ORGS
+      .filter(o => (o.sources || []).includes(id))
+      .filter(o => {
+        // If it's the 'Undifferentiated' (all) source and fungal is NOT suspected,
+        // hide fungal pathogens to avoid overwhelming the user with irrelevant gaps.
+        if (id === 'all' && !isFungalSuspected) {
+          const isFungal = ['YEASTS', 'MOLDS', 'DIMORPHIC', 'MURAL'].includes(o.category);
+          return !isFungal;
+        }
+        return true;
+      })
+      .map(o => o.id);
+  }, [sourceId, ALL_ORGS, isFungalSuspected]);
 
   const targetOrgs = useMemo(() => {
     const combined = new Map();
@@ -183,6 +197,17 @@ export function ScenarioAdvisor({
          <div className={`${styles.advCard} ${styles.scenarioCard}`}>
             <h2>{source.ico} {source.l}</h2>
             <p>Empiric coverage targets for this source.</p>
+            {(!sourceId || sourceId === 'all') && (
+              <div className={styles.fungalToggleRow} onClick={() => onToggleModifier('Suspected Fungal')}>
+                <input 
+                  type="checkbox" 
+                  id="fungal_suspect" 
+                  checked={isFungalSuspected} 
+                  onChange={() => {}} // Handled by div onClick
+                />
+                <label htmlFor="fungal_suspect">Suspected Fungal Infection (Anti-Clutter Filter)</label>
+              </div>
+            )}
          </div>
 
          <div className={styles.guidelineSection}>
