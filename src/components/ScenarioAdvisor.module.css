@@ -1,0 +1,398 @@
+/* ── SCENARIO ADVISOR LAYOUT ── */
+.advisorScreen {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 80px;
+}
+
+.advHeader {
+  padding: 0 0 16px;
+  margin-bottom: 24px;
+}
+
+.advMainTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.advBackBtn {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-left: -12px;
+  transition: background 0.15s;
+}
+
+.advBackBtn:hover {
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.advBody {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.advCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.scenarioCard h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.scenarioCard p {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.sectionTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.patientContext {
+  margin-top: 4px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.formGroup label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.advSelect {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  appearance: none;
+}
+
+.advSelect:focus {
+  border-color: var(--accent);
+}
+
+.advAddBtn {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.advAddBtn:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.advSectionBlock {
+  margin-top: 8px;
+}
+
+.advEmptyText {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.advList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.advItemCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+}
+
+.abxCTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.abxCTop strong {
+  font-size: 15px;
+  color: #fff;
+}
+
+.advRemoveBtn {
+  background: transparent;
+  border: none;
+  color: var(--danger);
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.advRemoveBtn:hover {
+  opacity: 1;
+}
+
+.abxCSub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.abxCDetails {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #fff;
+  opacity: 0.9;
+}
+
+.orgCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: #fff;
+}
+
+/* Coverage Analysis */
+.advAnalysisList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.advCovRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 12px 16px;
+  border-radius: 8px;
+}
+
+.advCovRow .orgName {
+  font-size: 14px;
+  color: #fff;
+}
+
+.badgeReliable {
+  background: #22c55e;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badgeNone {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Alert Boxes */
+.advAlertBox {
+  margin-top: 16px;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.advAlertBoxDanger {
+  background: #3f1616;
+  border: 1px solid var(--danger);
+}
+
+.alertHdr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #f87171;
+  margin-bottom: 12px;
+}
+
+.alertItems {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alertItemRow {
+  background: rgba(0,0,0,0.2);
+  border-left: 2px solid var(--danger);
+  padding: 12px 16px;
+  border-radius: 0 6px 6px 0;
+  color: #fff;
+  font-size: 14px;
+}
+
+.advAlertBoxInfo {
+  background: var(--panel);
+  border: 1px solid #0ea5e9;
+}
+
+.alertHdrInfo {
+  color: var(--accent);
+}
+
+.recItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recRow {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.recRow .arr {
+  color: var(--accent);
+  margin-right: 6px;
+  font-weight: 800;
+}
+
+.recRow strong {
+  color: #fff;
+}
+
+/* ── TABLET OPTIMIZATIONS ── */
+@media (min-width: 768px) {
+  .advMainTitle {
+    font-size: 32px;
+  }
+
+  .advCard {
+    padding: 32px;
+  }
+
+  .sectionTitle {
+    font-size: 18px;
+  }
+
+  .inputGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .alertItems {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .recItems {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+/* ── SLIDER ── */
+.advSlider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--surface);
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  margin: 12px 0 6px;
+}
+
+.advSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ── STICKY FOOTER ── */
+.advActionFooter {
+  position: sticky;
+  bottom: -20px;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, var(--bg) 20%);
+  padding: 40px 0 20px;
+  margin: 0 -16px;
+  display: flex;
+  justify-content: center;
+  z-index: 10;
+}
+
+.finalBtn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 18px 40px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(56, 189, 248, 0.4);
+  transition: all 0.2s;
+}
+
+.finalBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.5);
+}

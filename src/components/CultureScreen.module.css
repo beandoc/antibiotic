@@ -1,0 +1,218 @@
+.cultureScreen {
+  padding-bottom: 40px;
+}
+
+.cultureGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cSourceSelector {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.cSourceSelector::-webkit-scrollbar { display: none; }
+
+.cSrcBtn {
+  flex: 1;
+  min-width: 80px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 12px 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cSrcBtn.active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.cIco { font-size: 16px; }
+.cLbl { 
+  font-size: 9px; 
+  font-weight: 800; 
+  color: var(--text-muted); 
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.active .cLbl { color: var(--accent); }
+
+.cWorkspace {
+  flex: 1;
+}
+
+.searchBoxWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0 16px;
+  height: 52px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.searchBoxWrap:focus-within {
+  border-color: var(--accent);
+}
+
+.searchBoxWrap input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  outline: none;
+}
+
+.searchResults {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.resItem {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.resItem:last-child { border-bottom: none; }
+.resItem:hover { background: rgba(255,255,255,0.03); color: var(--accent); }
+
+.labHistoryStack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.emptyCultureState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  background: rgba(255,255,255,0.01);
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+}
+
+.ecsIco { color: var(--text-muted); margin-bottom: 20px; opacity: 0.5; }
+.emptyCultureState h3 { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+.emptyCultureState p { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 32px; max-width: 280px; }
+.ecsBtn { width: auto; padding: 14px 24px; font-size: 13px; }
+
+.labReportCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.lTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.lMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lSrcName {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lRem {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.lOrgFound {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.susceptibilityCheck {
+  margin-top: 16px;
+}
+
+.alertBanner {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+
+.alertBanner.danger { background: var(--danger-dim); border-color: rgba(239, 68, 68, 0.3); }
+.alertBanner.pass { background: var(--success-dim); border-color: rgba(52, 211, 153, 0.3); }
+.alertBanner.neutral { background: rgba(148, 163, 184, 0.1); border-color: rgba(148, 163, 184, 0.2); }
+
+.aHdr {
+  font-size: 11px;
+  font-weight: 900;
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+
+.danger .aHdr { color: var(--danger); }
+.pass .aHdr { color: var(--success); }
+.neutral .aHdr { color: var(--text-muted); }
+
+.aMsg {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .cultureGrid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    align-items: start;
+  }
+  
+  .cSourceSelector {
+    flex-direction: column;
+    overflow: visible;
+  }
+}

@@ -1,0 +1,159 @@
+.safetyScreen {
+  padding-bottom: 40px;
+}
+
+.safetyGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.safetySectionCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.sCardHdr {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 16px;
+  font-size: 12px;
+  font-weight: 800;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.renalControls {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rcMetric {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rcLbl {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--warning);
+  text-transform: uppercase;
+}
+
+.rcVal {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--warning);
+}
+
+.rcVal span {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.renalControls input[type="range"] {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  outline: none;
+}
+
+.renalControls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 48px;
+  height: 16px;
+  background: var(--warning);
+  border-radius: 4px;
+}
+
+.rcSide {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.sStat {
+  background: rgba(0,0,0,0.2);
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.sStat label {
+  display: block;
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.sStat span {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--warning);
+}
+
+.safetyList {
+  display: flex;
+  flex-direction: column;
+}
+
+.safetyLineItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.safetyLineItem:last-child {
+  border-bottom: none;
+}
+
+.sName {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.sBadgeStack {
+  text-align: right;
+  min-width: 140px;
+}
+
+.sMainTag {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+:global(.success) .sMainTag { background: var(--success-dim); color: var(--success); }
+:global(.warning) .sMainTag { background: var(--warning-dim); color: var(--warning); }
+:global(.danger) .sMainTag { background: var(--danger-dim); color: var(--danger); }
+
+.sSubNote {
+  font-size: 10px;
+  color: var(--text-muted);
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .safetyGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

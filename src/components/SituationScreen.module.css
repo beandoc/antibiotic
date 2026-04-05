@@ -1,0 +1,129 @@
+.situationScreen {
+  padding-bottom: 40px;
+}
+
+.sourceGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.sourceTile {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 24px 20px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.sourceTile:hover {
+  transform: translateY(-2px);
+  border-color: var(--surface);
+  background: var(--surface);
+}
+
+.sourceTile.activeSource {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  box-shadow: 0 0 20px var(--accent-dim);
+}
+
+.sourceTile .ico { 
+  font-size: 28px; 
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.3));
+}
+
+.sourceTile .lbl { 
+  font-size: 10px; 
+  font-weight: 700; 
+  color: var(--text-muted); 
+  letter-spacing: 1.2px; 
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.sourceTile.activeSource .lbl {
+  color: var(--accent);
+}
+
+.clinicalStatus {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-top: 24px;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clinicalStatus strong {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.modifierSection {
+  margin-top: 32px;
+  margin-bottom: 40px;
+}
+
+.modifierSection label {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.chipCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modChip {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modChip:hover {
+  border-color: var(--surface);
+}
+
+.modChip.active {
+  background: #f59e0b20;
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.footer {
+  margin-top: 40px;
+}
+
+@media (min-width: 768px) {
+  .sourceGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}

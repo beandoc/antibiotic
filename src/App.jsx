@@ -9,6 +9,8 @@ import { RegimenScreen } from './components/RegimenScreen';
 import { CultureScreen } from './components/CultureScreen';
 import { SafetyScreen } from './screens/SafetyScreen';
 import { GapAnalysisSheet } from './components/GapAnalysisSheet';
+import { DrugPickerModal } from './components/DrugPickerModal';
+import { ScenarioAdvisor } from './components/ScenarioAdvisor';
 
 function App() {
   const [activeTab, setActiveTab] = useState('situation');
@@ -21,8 +23,11 @@ function App() {
   const [selectedSourceId, setSelectedSourceId] = useState(null);
   const [riskModifiers, setRiskModifiers] = useState(new Set());
   const [manualAbx, setManualAbx] = useState(new Set());
-  const [activeRegimenIdx, setActiveRegimenIdx] = useState(0); 
+  const [activeRegimenIdx, setActiveRegimenIdx] = useState(0);
   const [activeGapOrg, setActiveGapOrg] = useState(null);
+  const [showDrugPicker, setShowDrugPicker] = useState(false);
+  // Temporary selection state for the drug picker (committed on confirm)
+  const [pickerSelection, setPickerSelection] = useState(new Set());
   const [cultureSource, setCultureSource] = useState('blood');
   const [eGFR, setEGFR] = useState(100);
   const [childPugh, setChildPugh] = useState('A');
@@ -107,6 +112,27 @@ function App() {
     setManualAbx(next);
   };
 
+  const openDrugPicker = () => {
+    // Pre-populate picker with current manual selection
+    setPickerSelection(new Set(manualAbx));
+    setShowDrugPicker(true);
+  };
+
+  const togglePickerDrug = (id) => {
+    setPickerSelection(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const confirmDrugPicker = () => {
+    setManualAbx(new Set(pickerSelection));
+    setShowDrugPicker(false);
+    // Switch to advisor tab so the custom build results are immediate
+    setActiveTab('advisor');
+  };
+
   return (
     <div className="app-container">
       <main className="main-content">
@@ -120,7 +146,7 @@ function App() {
               if (next.has(m)) next.delete(m); else next.add(m);
               setRiskModifiers(next);
             }}
-            onShowEmpiric={() => setActiveTab('regimen')} 
+            onShowEmpiric={() => setActiveTab('advisor')} 
             isDarkMode={isDarkMode}
             onToggleTheme={() => setIsDarkMode(!isDarkMode)}
             pmProps={{
@@ -138,8 +164,8 @@ function App() {
             setSlide={setActiveRegimenIdx}
             getCov={(abxIds) => getRegimenCoverage(abxIds, relevantOrgs)}
             onOpenGap={(org) => setActiveGapOrg(org)}
-            onSelect={() => setActiveTab('culture')}
-            onManual={() => setActiveTab('culture')}
+            onSelect={() => setActiveTab('safety')}
+            onManual={openDrugPicker}
           />
         )}
         {activeTab === 'culture' && (
@@ -151,6 +177,10 @@ function App() {
             currentRegimen={manualRegimen || availableRegimens[activeRegimenIdx]} 
             getCoverage={getCoverage} 
             onSkip={() => setActiveTab('safety')}
+            onFinish={() => {
+              alert('Treatment Plan Finalized & Exported to EHR Simulation');
+              resetAll();
+            }}
           />
         )}
         {activeTab === 'safety' && (
@@ -158,7 +188,23 @@ function App() {
             eGFR={eGFR} setEGFR={setEGFR} 
             childPugh={childPugh} setChildPugh={setChildPugh} 
             currentRegimen={manualRegimen || availableRegimens[activeRegimenIdx]} 
+            onNext={(opts) => {
+              if (opts?.back) setActiveTab('advisor');
+              else setActiveTab('culture');
+            }}
           />
+        )}
+        {activeTab === 'advisor' && (
+           <ScenarioAdvisor 
+              sourceId={selectedSourceId}
+              selectedAbxSet={manualAbx}
+              onToggleAbx={toggleManualAbx}
+              eGFR={eGFR}
+              setEGFR={setEGFR}
+              onOpenDrugPicker={openDrugPicker}
+              onBack={() => setActiveTab('situation')}
+              onNext={() => setActiveTab('safety')}
+           />
         )}
       </main>
 
@@ -173,11 +219,20 @@ function App() {
         />
       )}
 
+      {showDrugPicker && (
+        <DrugPickerModal
+          selectedAbx={pickerSelection}
+          onToggle={togglePickerDrug}
+          onConfirm={confirmDrugPicker}
+          onClose={() => setShowDrugPicker(false)}
+        />
+      )}
+
       <nav className="bottom-instrument-nav">
         <button className={activeTab === 'situation' ? 'active' : ''} onClick={() => setActiveTab('situation')}><Target size={20} /><span>TRIAGE</span></button>
-        <button className={activeTab === 'regimen' ? 'active' : ''} onClick={() => setActiveTab('regimen')}><Zap size={20} /><span>EMPIRIC</span></button>
-        <button className={activeTab === 'culture' ? 'active' : ''} onClick={() => setActiveTab('culture')}><Microscope size={20} /><span>CULTURE</span></button>
+        <button className={activeTab === 'advisor' || activeTab === 'regimen' ? 'active' : ''} onClick={() => setActiveTab('advisor')}><Zap size={20} /><span>ADVISOR</span></button>
         <button className={activeTab === 'safety' ? 'active' : ''} onClick={() => setActiveTab('safety')}><Shield size={20} /><span>SAFETY</span></button>
+        <button className={activeTab === 'culture' ? 'active' : ''} onClick={() => setActiveTab('culture')}><Microscope size={20} /><span>CULTURE</span></button>
       </nav>
     </div>
   );

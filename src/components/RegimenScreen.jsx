@@ -22,7 +22,7 @@ export function RegimenScreen({ source, recommendations, riskModifiers, activeSl
 
       <div className="swipe-instruction">Swipe to compare options →</div>
 
-      <div className="regimen-deck" onScroll={handleScroll}>
+      <div className="regimen-swipe-deck" onScroll={handleScroll}>
          {recommendations.map((r, i) => {
            // We have already passed activeSlide here
            const { total, gaps } = getCov(r.abx);
