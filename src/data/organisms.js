@@ -1,44 +1,20 @@
 /**
- * CLINICALLY VALIDATED PATHOGEN DATABASE (v10.0)
- * Corrected UTI, CAP, and Sepsis mappings.
+ * FULL CLINICALLY VALIDATED PATHOGEN DATABASE (83 Items)
+ * Alignment: Sanford Guide 2024 / IDSA GDLs
  */
 export const ORGANISMS = [
-  { 
-    id: "org_0", 
-    name: "E. faecalis (VS)", 
-    category: "gpc", 
-    sources: ["all", "bact", "uti_comp", "endo", "iab"], 
-    note: "Complicated/catheter UTI only." 
-  },
-  { 
-    id: "org_1", 
-    name: "E. faecium (VS)", 
-    category: "gpc", 
-    sources: ["all", "bact", "endo"], 
-    note: "Healthcare bacteraemia. Not standard UTI." 
-  },
+  { id: "org_0", name: "E. faecalis (VS)", category: "gpc", sources: ["all", "bact", "uti_comp", "endo", "iab"] },
+  { id: "org_1", name: "E. faecium (VS)", category: "gpc", sources: ["all", "bact", "endo"] },
   { id: "org_2", name: "E. faecalis (VRE)", category: "gpc", sources: ["all", "bact", "endo"], crit: 1 },
   { id: "org_3", name: "E. faecium (VRE)", category: "gpc", sources: ["all", "bact", "endo"], crit: 1 },
-  { 
-    id: "org_4", 
-    name: "S. aureus MSSA", 
-    category: "gpc", 
-    sources: ["all", "bact", "ssti", "osteo", "endo", "cap", "hap", "iab"], 
-    note: "Bacteremia marker if in urine. NOT for simple UTI." 
-  },
+  { id: "org_4", name: "S. aureus MSSA", category: "gpc", sources: ["all", "bact", "ssti", "osteo", "endo", "cap", "hap", "iab"] },
   { id: "org_5", name: "S. aureus MRSA", category: "gpc", sources: ["all", "bact", "ssti", "osteo", "endo", "hap", "cap"], crit: 1 },
   { id: "org_6", name: "Staph coag-neg (MS)", category: "gpc", sources: ["all", "bact", "endo", "ssti"] },
   { id: "org_7", name: "Staph coag-neg (MR)", category: "gpc", sources: ["all", "bact", "endo"], crit: 1 },
   { id: "org_8", name: "S. epidermidis (MR)", category: "gpc", sources: ["all", "bact", "endo"], crit: 1 },
   { id: "org_9", name: "S. epidermidis (MS)", category: "gpc", sources: ["all", "bact", "endo", "ssti"] },
   { id: "org_10", name: "S. lugdunensis", category: "gpc", sources: ["all", "bact", "endo", "ssti"] },
-  { 
-    id: "org_11", 
-    name: "S. saprophyticus", 
-    category: "gpc", 
-    sources: ["all", "uti_simple", "uti_comp"], 
-    note: "Cystitis in young women." 
-  },
+  { id: "org_11", name: "S. saprophyticus", category: "gpc", sources: ["all", "uti_simple", "uti_comp"] },
   { id: "org_12", name: "Strep. anginosus gp", category: "gpc", sources: ["all", "bact", "iab", "ssti", "endo"] },
   { id: "org_13", name: "Strep. pyogenes (A)", category: "gpc", sources: ["all", "ssti", "cap", "bact"] },
   { id: "org_14", name: "Strep. agalactiae (B)", category: "gpc", sources: ["all", "bact", "ssti", "endo", "mening"] },
@@ -54,13 +30,7 @@ export const ORGANISMS = [
   { id: "org_24", name: "C. freundii", category: "gne", sources: ["all", "bact", "uti_comp", "hap"] },
   { id: "org_25", name: "C. koseri", category: "gne", sources: ["all", "bact", "uti_comp", "mening"] },
   { id: "org_26", name: "E. cloacae", category: "gne", sources: ["all", "bact", "uti_comp", "hap"] },
-  { 
-    id: "org_27", 
-    name: "E. coli (S)", 
-    category: "gne", 
-    sources: ["all", "uti_simple", "uti_comp", "bact", "iab", "ssti"],
-    note: "Most common community UTI pathogen."
-  },
+  { id: "org_27", name: "E. coli (S)", category: "gne", sources: ["all", "uti_simple", "uti_comp", "bact", "iab", "ssti"] },
   { id: "org_28", name: "E. coli (ESBL)", category: "gne", sources: ["all", "uti_simple", "uti_comp", "bact", "iab"], crit: 1 },
   { id: "org_29", name: "E. coli (KPC)", category: "gne", sources: ["all", "bact", "uti_comp"], crit: 1 },
   { id: "org_30", name: "E. coli (MBL)", category: "gne", sources: ["all", "bact", "uti_comp"], crit: 1 },
@@ -78,10 +48,42 @@ export const ORGANISMS = [
   { id: "org_42", name: "Serratia marcescens", category: "gne", sources: ["all", "bact", "hap", "uti_comp"] },
   { id: "org_43", name: "Shigella sp.", category: "gne", sources: ["all", "iab", "bact"] },
   { id: "org_44", name: "Y. enterocolitica", category: "gne", sources: ["all", "bact", "iab"] },
-  { id: "org_45", name: "Bartonella sp.", category: "gnn", sources: ["all", "bact", "endo", "zoo"] },
+  { id: "org_45", name: "Bartonella sp.", category: "gnn", sources: ["all", "bact", "endo"] },
+  { id: "org_46", name: "B. pertussis", category: "gnn", sources: ["all", "cap"] },
+  { id: "org_47", name: "B. burgdorferi", category: "gnn", sources: ["all", "mening"] },
+  { id: "org_48", name: "Brucella sp.", category: "gnn", sources: ["all", "bact", "osteo", "endo"] },
+  { id: "org_49", name: "C. jejuni", category: "gnn", sources: ["all", "iab", "bact"] },
+  { id: "org_50", name: "Capnocytophaga sp.", category: "gnn", sources: ["all", "bact", "ssti"] },
+  { id: "org_51", name: "C. burnetii (Q fever)", category: "gnn", sources: ["all", "cap", "endo"] },
+  { id: "org_52", name: "Ehrlichia, Anaplas.", category: "gnn", sources: ["all", "bact"] },
+  { id: "org_53", name: "Eikenella sp.", category: "gnn", sources: ["all", "bact", "ssti", "endo"] },
+  { id: "org_54", name: "F. tularensis", category: "gnn", sources: ["all", "cap", "bact"] },
+  { id: "org_55", name: "H. ducreyi", category: "gnn", sources: ["all", "sti"] },
   { id: "org_56", name: "H. influenzae", category: "gnn", sources: ["all", "cap", "mening", "ssti", "bact"] },
+  { id: "org_57", name: "Kingella sp.", category: "gnn", sources: ["all", "bact", "osteo", "endo"] },
+  { id: "org_58", name: "K. granulomatis", category: "gnn", sources: ["all", "sti"] },
   { id: "org_59", name: "Legionella sp.", category: "gnn", sources: ["all", "cap", "hap"] },
+  { id: "org_60", name: "Leptospira sp.", category: "gnn", sources: ["all"] },
+  { id: "org_61", name: "M. catarrhalis", category: "gnn", sources: ["all", "cap"] },
+  { id: "org_62", name: "N. meningitidis", category: "gnn", sources: ["all", "mening", "bact"] },
+  { id: "org_63", name: "P. multocida", category: "gnn", sources: ["all", "ssti", "bact"] },
+  { id: "org_64", name: "R. ricketsii (RMSF)", category: "gnn", sources: ["all"] },
+  { id: "org_65", name: "V. cholera", category: "gnn", sources: ["all", "iab"] },
+  { id: "org_66", name: "V. parahemolyticus", category: "gnn", sources: ["all", "iab"] },
+  { id: "org_67", name: "V. vulnificus", category: "gnn", sources: ["all", "bact", "ssti"] },
+  { id: "org_68", name: "Y. pestis", category: "gnn", sources: ["all", "cap", "bact"] },
+  { id: "org_69", name: "A. baumannii", category: "nf", sources: ["all", "hap", "bact", "ssti"], crit: 1 },
+  { id: "org_70", name: "B. cepacia", category: "nf", sources: ["all", "hap", "bact"] },
   { id: "org_71", name: "P. aeruginosa", category: "nf", sources: ["all", "hap", "uti_comp", "bact", "ssti", "cap"], crit: 1 },
   { id: "org_72", name: "S. maltophilia", category: "nf", sources: ["all", "hap", "bact"], crit: 1 },
-  { id: "org_76", name: "B. fragilis", category: "an", sources: ["all", "iab", "bact", "ssti"] }
+  { id: "org_73", name: "C. trachomatis", category: "atyp", sources: ["all", "sti", "cap"] },
+  { id: "org_74", name: "Chlamydophila sp.", category: "atyp", sources: ["all", "cap"] },
+  { id: "org_75", name: "M. pneumoniae", category: "atyp", sources: ["all", "cap"] },
+  { id: "org_76", name: "B. fragilis", category: "an", sources: ["all", "iab", "bact", "ssti"] },
+  { id: "org_77", name: "F. necrophorum", category: "an", sources: ["all", "bact", "ssti"] },
+  { id: "org_78", name: "Prevotella sp.", category: "an", sources: ["all", "iab", "ssti"] },
+  { id: "org_79", name: "Actinomyces sp.", category: "an", sources: ["all", "ssti", "iab"] },
+  { id: "org_80", name: "Clostridium sp.", category: "an", sources: ["all", "iab", "ssti"] },
+  { id: "org_81", name: "C. acnes", category: "an", sources: ["all", "bact", "ssti"] },
+  { id: "org_82", name: "Peptostreptococci", category: "an", sources: ["all", "iab", "ssti"] }
 ];
