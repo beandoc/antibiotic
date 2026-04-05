@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Target, Zap, Microscope, Shield } from 'lucide-react';
+import { Target, Zap, Microscope, Shield, FileText } from 'lucide-react';
 
 import { ANTIBIOTICS, ORGANISMS, SOURCES, RECOMMENDATIONS as RECS } from './data';
 import { getCoverage } from './utils/coverageEngine';
@@ -122,6 +122,18 @@ function App() {
   return (
     <div className="app-container">
       <main className="main-content">
+        <div className="clinical-step-map">
+          {['situation', 'advisor', 'safety', 'culture', 'summary'].map((step, idx) => (
+            <React.Fragment key={step}>
+              <div className={`step-node ${activeTab === step ? 'active' : ''} ${idx < ['situation', 'advisor', 'safety', 'culture', 'summary'].indexOf(activeTab) ? 'completed' : ''}`}>
+                <div className="step-num">{idx + 1}</div>
+                <div className="step-lbl">{step.toUpperCase()}</div>
+              </div>
+              {idx < 4 && <div className="step-path" />}
+            </React.Fragment>
+          ))}
+        </div>
+
         {activeTab === 'situation' && (
           <SituationScreen 
             selectedId={selectedSourceId} 
@@ -211,6 +223,7 @@ function App() {
         <button className={activeTab === 'advisor' ? 'active' : ''} onClick={() => setActiveTab('advisor')}><Zap size={20} /><span>ADVISOR</span></button>
         <button className={activeTab === 'safety' ? 'active' : ''} onClick={() => setActiveTab('safety')}><Shield size={20} /><span>SAFETY</span></button>
         <button className={activeTab === 'culture' ? 'active' : ''} onClick={() => setActiveTab('culture')}><Microscope size={20} /><span>CULTURE</span></button>
+        <button className={activeTab === 'summary' ? 'active' : ''} onClick={() => setActiveTab('summary')}><FileText size={20} /><span>SUMMARY</span></button>
       </nav>
     </div>
   );
