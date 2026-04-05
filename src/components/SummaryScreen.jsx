@@ -4,18 +4,25 @@ import { ANTIBIOTICS, SOURCES } from '../data';
 import styles from './SummaryScreen.module.css';
 
 export function SummaryScreen({ 
-  patientId, sourceId, selectedAbxSet, riskModifiers, eGFR, astOverrides, onReset 
+  patientId = '', 
+  sourceId = '', 
+  selectedAbxSet = new Set(), 
+  riskModifiers = new Set(), 
+  eGFR = 100, 
+  astOverrides = {}, 
+  onReset 
 }) {
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
-  const drugs = Array.from(selectedAbxSet).map(id => ANTIBIOTICS.find(a => String(a.id) === String(id))).filter(Boolean);
+  const abxIds = Array.from(selectedAbxSet || []);
+  const drugs = abxIds.map(id => ANTIBIOTICS.find(a => String(a.id) === String(id))).filter(Boolean);
   
   const strengths = useMemo(() => {
     const list = [];
     if (drugs.length > 0) list.push(`Empiric coverage for ${source.l} target pathogens.`);
-    if (drugs.some(d => ['Vancomycin', 'Linezolid'].includes(d.name))) list.push("MRSA coverage included.");
-    if (drugs.some(d => ['Piperacillin', 'Meropenem', 'Cefepime'].includes(d.name))) list.push("Pseudomonal coverage confirmed.");
+    if (drugs.some(d => d.name && ['Vancomycin', 'Linezolid'].includes(d.name))) list.push("MRSA coverage included.");
+    if (drugs.some(d => d.name && ['Piperacillin', 'Meropenem', 'Cefepime'].includes(d.name))) list.push("Pseudomonal coverage confirmed.");
     if (eGFR > 60) list.push("Renal function supports full drug loading.");
-    if (Object.keys(astOverrides).length > 0) list.push("AST (Manual lab) reports integrated into model.");
+    if (Object.keys(astOverrides || {}).length > 0) list.push("AST (Manual lab) reports integrated into model.");
     return list;
   }, [drugs, source, eGFR, astOverrides]);
 
@@ -24,7 +31,8 @@ export function SummaryScreen({
     if (drugs.length === 1) list.push("Monotherapy: Potential for narrow spectrum gaps.");
     if (drugs.some(d => d.class === 'Carbapenems')) list.push("Broad Spectrum: High selective pressure for C. diff / MDR.");
     if (eGFR < 50) list.push("Renally restricted: Dose adjustment required in Safety tab.");
-    if (Array.from(riskModifiers).length > 0) list.push(`Patient risk factors (${Array.from(riskModifiers).join(', ')}) heighten risk of treatment failure.`);
+    const riskArr = Array.from(riskModifiers || []);
+    if (riskArr.length > 0) list.push(`Patient risk factors (${riskArr.join(', ')}) heighten risk of treatment failure.`);
     return list;
   }, [drugs, eGFR, riskModifiers]);
 

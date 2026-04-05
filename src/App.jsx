@@ -34,6 +34,7 @@ function App() {
   const [childPugh, setChildPugh] = useState('A');
   const [search, setSearch] = useState('');
   const [labRecords, setLabRecords] = useState({});
+  const [astOverrides, setAstOverrides] = useState({});
 
   const [patientId, setPatientId] = useState('');
   const [patients, setPatients] = useState({});
@@ -81,6 +82,7 @@ function App() {
     setRiskModifiers(new Set());
     setManualAbx(new Set());
     setLabRecords({});
+    setAstOverrides({});
     setEGFR(100);
     setSearch('');
     setActiveTab('situation');
@@ -104,7 +106,8 @@ function App() {
 
   const relevantOrgs = useMemo(() => {
     const id = selectedSourceId || 'all';
-    return ORGANISMS.filter(o => o.sources.includes(id) || o.sources.includes('all'));
+    // Use the 'sources' field from the modular organisms data
+    return ORGANISMS.filter(o => (o.sources || []).includes(id) || (o.sources || []).includes('all'));
   }, [selectedSourceId]);
 
   const toggleManualAbx = (id) => {
@@ -199,6 +202,7 @@ function App() {
             selectedAbxSet={manualAbx.size > 0 ? manualAbx : new Set(availableRegimens[activeRegimenIdx]?.abx || [])}
             riskModifiers={riskModifiers}
             eGFR={eGFR}
+            astOverrides={astOverrides}
             onReset={resetAll}
           />
         )}

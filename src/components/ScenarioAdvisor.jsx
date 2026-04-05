@@ -47,16 +47,16 @@ function OrgPickerModal({ onAdd, onClose }) {
   );
 }
 
-export function ScenarioAdvisor({ sourceId, riskModifiers, onToggleModifier, selectedAbxSet, onToggleAbx, eGFR, setEGFR, onOpenDrugPicker, onBack, onNext }) {
+export function ScenarioAdvisor({ sourceId, riskModifiers, onToggleModifier, selectedAbxSet, onToggleAbx, eGFR, setEGFR, astOverrides, setAstOverrides, onOpenDrugPicker, onBack, onNext }) {
   const [showOrgPicker, setShowOrgPicker] = useState(false);
   const [cultureOrgs, setCultureOrgs] = useState([]);
-  const [astOverrides, setAstOverrides] = useState({});
+
 
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
   
   const baselineOrgIds = useMemo(() => {
     const id = sourceId || 'all';
-    return ORGANISMS.filter(o => o.sources.includes(id) || o.sources.includes('all')).slice(0, 3).map(o => o.id);
+    return ORGANISMS.filter(o => (o.sources || []).includes(id) || (o.sources || []).includes('all')).slice(0, 3).map(o => o.id);
   }, [sourceId]);
 
   const targetOrgs = useMemo(() => {
