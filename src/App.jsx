@@ -2,13 +2,11 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Target, Zap, Microscope, Shield } from 'lucide-react';
 
 import { ANTIBIOTICS, ORGANISMS, SOURCES, RECOMMENDATIONS as RECS } from './data';
-import { getRegimenCoverage, getCoverage } from './utils/coverageEngine';
+import { getCoverage } from './utils/coverageEngine';
 
 import { SituationScreen } from './components/SituationScreen';
-import { RegimenScreen } from './components/RegimenScreen';
 import { CultureScreen } from './components/CultureScreen';
 import { SafetyScreen } from './screens/SafetyScreen';
-import { GapAnalysisSheet } from './components/GapAnalysisSheet';
 import { DrugPickerModal } from './components/DrugPickerModal';
 import { ScenarioAdvisor } from './components/ScenarioAdvisor';
 import { SummaryScreen } from './components/SummaryScreen';
@@ -24,10 +22,7 @@ function App() {
   const [selectedSourceId, setSelectedSourceId] = useState(null);
   const [riskModifiers, setRiskModifiers] = useState(new Set());
   const [manualAbx, setManualAbx] = useState(new Set());
-  const [activeRegimenIdx, setActiveRegimenIdx] = useState(0);
-  const [activeGapOrg, setActiveGapOrg] = useState(null);
   const [showDrugPicker, setShowDrugPicker] = useState(false);
-  // Temporary selection state for the drug picker (committed on confirm)
   const [pickerSelection, setPickerSelection] = useState(new Set());
   const [cultureSource, setCultureSource] = useState('blood');
   const [eGFR, setEGFR] = useState(100);
@@ -90,28 +85,14 @@ function App() {
 
   const availableRegimens = useMemo(() => {
     const id = selectedSourceId || 'all';
-    const isHighRisk = riskModifiers.has('ICU / Ventilated') || riskModifiers.has('Prev. ABX <90d');
     const recs = (RECS[id] || RECS['all']) || [];
-    return [...recs].sort((a, b) => isHighRisk ? b.tier - a.tier : a.tier - b.tier);
-  }, [selectedSourceId, riskModifiers]);
-
-  const currentSource = useMemo(() => {
-    return SOURCES.find(s => s.id === selectedSourceId) || { id: 'all', l: 'Undifferentiated', ico: '🌐' };
+    return recs;
   }, [selectedSourceId]);
 
   const manualRegimen = useMemo(() => {
     if (manualAbx.size === 0) return null;
     return { name: 'MANUAL BUILD', abx: Array.from(manualAbx), tier: 0, notes: 'User-specified antibiotic combination.' };
   }, [manualAbx]);
-
-  const relevantOrgs = useMemo(() => {
-    const id = selectedSourceId;
-    if (!id) {
-      // Undifferentiated scenario defaults to a broad Bacteremia/Sepsis baseline
-      return ORGANISMS.filter(o => (o.sources || []).includes('bact'));
-    }
-    return ORGANISMS.filter(o => (o.sources || []).includes(id));
-  }, [selectedSourceId]);
 
   const toggleManualAbx = (id) => {
     const next = new Set(manualAbx);
@@ -120,7 +101,6 @@ function App() {
   };
 
   const openDrugPicker = () => {
-    // Pre-populate picker with current manual selection
     setPickerSelection(new Set(manualAbx));
     setShowDrugPicker(true);
   };
@@ -136,7 +116,6 @@ function App() {
   const confirmDrugPicker = () => {
     setManualAbx(new Set(pickerSelection));
     setShowDrugPicker(false);
-    // Switch to advisor tab so the custom build results are immediate
     setActiveTab('advisor');
   };
 
@@ -162,53 +141,6 @@ function App() {
             }}
           />
         )}
-        {activeTab === 'regimen' && (
-          <RegimenScreen 
-            source={currentSource} 
-            recommendations={availableRegimens}
-            riskModifiers={riskModifiers}
-            activeSlide={activeRegimenIdx}
-            setSlide={setActiveRegimenIdx}
-            getCov={(abxIds) => getRegimenCoverage(abxIds, relevantOrgs)}
-            onOpenGap={(org) => setActiveGapOrg(org)}
-            onSelect={() => setActiveTab('safety')}
-            onManual={openDrugPicker}
-          />
-        )}
-        {activeTab === 'culture' && (
-          <CultureScreen 
-            search={search} setSearch={setSearch} 
-            activeSource={cultureSource} setSource={setCultureSource}
-            labRecords={labRecords} onAddRecord={(s, o) => setLabRecords(prev => ({...prev, [s]: o}))}
-            onRemoveRecord={(s) => {const n = {...labRecords}; delete n[s]; setLabRecords(n);}}
-            currentRegimen={manualAbx.size > 0 ? manualRegimen : availableRegimens[activeRegimenIdx]} 
-            getCoverage={getCoverage} 
-            onSkip={() => setActiveTab('safety')}
-            onFinish={() => setActiveTab('summary')}
-          />
-        )}
-        {activeTab === 'safety' && (
-          <SafetyScreen 
-            eGFR={eGFR} setEGFR={setEGFR} 
-            childPugh={childPugh} setChildPugh={setChildPugh} 
-            currentRegimen={manualAbx.size > 0 ? manualRegimen : availableRegimens[activeRegimenIdx]} 
-            onNext={(opts) => {
-              if (opts?.back) setActiveTab('advisor');
-              else setActiveTab('culture');
-            }}
-          />
-        )}
-        {activeTab === 'summary' && (
-          <SummaryScreen 
-            patientId={patientId}
-            sourceId={selectedSourceId}
-            selectedAbxSet={manualAbx.size > 0 ? manualAbx : new Set(availableRegimens[activeRegimenIdx]?.abx || [])}
-            riskModifiers={riskModifiers}
-            eGFR={eGFR}
-            astOverrides={astOverrides}
-            onReset={resetAll}
-          />
-        )}
         {activeTab === 'advisor' && (
            <ScenarioAdvisor 
               sourceId={selectedSourceId}
@@ -225,20 +157,45 @@ function App() {
               onOpenDrugPicker={openDrugPicker}
               onBack={() => setActiveTab('situation')}
               onNext={() => setActiveTab('safety')}
+              astOverrides={astOverrides}
+              setAstOverrides={setAstOverrides}
            />
         )}
+        {activeTab === 'safety' && (
+          <SafetyScreen 
+            eGFR={eGFR} setEGFR={setEGFR} 
+            childPugh={childPugh} setChildPugh={setChildPugh} 
+            currentRegimen={manualRegimen || (manualAbx.size === 0 ? availableRegimens[0] : null)} 
+            onNext={(opts) => {
+              if (opts?.back) setActiveTab('advisor');
+              else setActiveTab('culture');
+            }}
+          />
+        )}
+        {activeTab === 'culture' && (
+          <CultureScreen 
+            search={search} setSearch={setSearch} 
+            activeSource={cultureSource} setSource={setCultureSource}
+            labRecords={labRecords} onAddRecord={(s, o) => setLabRecords(prev => ({...prev, [s]: o}))}
+            onRemoveRecord={(s) => {const n = {...labRecords}; delete n[s]; setLabRecords(n);}}
+            currentRegimen={manualRegimen || availableRegimens[0]} 
+            getCoverage={getCoverage} 
+            onSkip={() => setActiveTab('safety')}
+            onFinish={() => setActiveTab('summary')}
+          />
+        )}
+        {activeTab === 'summary' && (
+          <SummaryScreen 
+            patientId={patientId}
+            sourceId={selectedSourceId}
+            selectedAbxSet={manualAbx.size > 0 ? manualAbx : new Set(availableRegimens[0]?.abx || [])}
+            riskModifiers={riskModifiers}
+            eGFR={eGFR}
+            astOverrides={astOverrides}
+            onReset={resetAll}
+          />
+        )}
       </main>
-
-      {activeGapOrg && (
-        <GapAnalysisSheet 
-          org={activeGapOrg} 
-          onAdd={id => {
-            toggleManualAbx(id);
-            setActiveGapOrg(null);
-          }}
-          onClose={() => setActiveGapOrg(null)}
-        />
-      )}
 
       {showDrugPicker && (
         <DrugPickerModal
@@ -251,7 +208,7 @@ function App() {
 
       <nav className="bottom-instrument-nav">
         <button className={activeTab === 'situation' ? 'active' : ''} onClick={() => setActiveTab('situation')}><Target size={20} /><span>TRIAGE</span></button>
-        <button className={activeTab === 'advisor' || activeTab === 'regimen' ? 'active' : ''} onClick={() => setActiveTab('advisor')}><Zap size={20} /><span>ADVISOR</span></button>
+        <button className={activeTab === 'advisor' ? 'active' : ''} onClick={() => setActiveTab('advisor')}><Zap size={20} /><span>ADVISOR</span></button>
         <button className={activeTab === 'safety' ? 'active' : ''} onClick={() => setActiveTab('safety')}><Shield size={20} /><span>SAFETY</span></button>
         <button className={activeTab === 'culture' ? 'active' : ''} onClick={() => setActiveTab('culture')}><Microscope size={20} /><span>CULTURE</span></button>
       </nav>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Microscope, Search, Plus, ShieldCheck } from 'lucide-react';
-import { SOURCES, ORGANISMS } from '../data';
+import { SOURCES, ORGANISMS, AF_ORGS } from '../data';
 import styles from './CultureScreen.module.css';
 
 export function CultureScreen({ search, setSearch, activeSource, setSource, labRecords, onAddRecord, onRemoveRecord, currentRegimen, getCoverage, onSkip, onFinish }) {
-  const filteredOrgs = search.length > 1 ? ORGANISMS.filter(o => o.name.toLowerCase().includes(search.toLowerCase())) : [];
+  const ALL_ORGS = [...ORGANISMS, ...AF_ORGS];
+  const filteredOrgs = search.length > 1 ? ALL_ORGS.filter(o => o.name.toLowerCase().includes(search.toLowerCase())) : [];
   
   return (
     <div className={`screen fade-in ${styles.cultureScreen}`}>

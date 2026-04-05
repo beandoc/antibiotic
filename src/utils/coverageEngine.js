@@ -12,7 +12,7 @@ export const getCoverage = (targetOrgId, abxIds) => {
 };
 
 export const getRegimenCoverage = (abxIds, relevantOrgs) => {
-  if (!abxIds || abxIds.length === 0) return { total: 0, gaps: [] };
+  if (!abxIds || abxIds.length === 0 || !relevantOrgs || relevantOrgs.length === 0) return { total: 0, gaps: [] };
   const scores = relevantOrgs.map(o => ({ o, s: getCoverage(o.id, abxIds) }));
   const covCount = scores.filter(x => x.s >= 2).length;
   const gaps = scores.filter(x => x.s === 0).map(x => x.o);
