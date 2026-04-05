@@ -1,14 +1,22 @@
-import { ANTIBIOTICS } from '../data';
-
+/**
+ * DATA-DRIVEN CLINICAL SAFETY ENGINE (v10.0)
+ * Parses renal adjustment rules from the ANTIBIOTICS matrix.
+ */
 export function getSafetyStatus(abx, egfr) {
-  const name = abx?.name || '';
-  if (name.includes('Nitrofurantoin') && egfr < 45) return { type: 'danger', label: 'CONTRAINDICATED', note: 'Insufficient urine levels' };
-  if (name.includes('Pip-Tazo') && egfr < 40) return { type: 'warning', label: 'DOSE REDUCE', note: '→ 2.25g q6h' };
-  if (name.includes('Meropenem') && egfr < 25) return { type: 'warning', label: 'DOSE REDUCE', note: '→ 500mg q8h' };
-  if (name.includes('Vancomycin')) return { type: 'warning', label: 'AUC GUIDED', note: '→ 25mg/kg; q24-48h' };
-  if (name.includes('Linezolid')) return { type: 'success', label: 'SAFE', note: 'No adjustment req.' };
-  if (name.includes('Metronidazole')) return { type: 'warning', label: 'CAUTION', note: 'Severe Child-Pugh C' };
-  if (name.includes('Rifampic')) return { type: 'danger', label: 'AVOID', note: 'Hepatotoxic monitor LFTs' };
-  if (name.includes('Clindamycin')) return { type: 'success', label: 'SAFE', note: 'Normal hepatic fx only' };
+  if (!abx || !abx.renal) {
+    return { type: 'neutral', label: 'NORMAL', note: 'Standard dose' };
+  }
+
+  // Find the matching renal rule based on current eGFR
+  const rule = abx.renal.find(r => egfr >= r.egfr_min && egfr <= r.egfr_max);
+
+  if (rule) {
+    return {
+      type: rule.type || 'warning',
+      label: (rule.dose === 'Standard' ? 'SAFE / NORMAL' : rule.dose).toUpperCase(),
+      note: rule.dose === 'Standard' ? 'No adjustment req.' : `→ ${rule.dose}`
+    };
+  }
+
   return { type: 'neutral', label: 'NORMAL', note: 'Standard dose' };
 }
