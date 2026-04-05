@@ -72,7 +72,7 @@ export function ScenarioAdvisor({
 
   const baselineOrgIds = useMemo(() => {
     const id = sourceId || 'all';
-    return ALL_ORGS.filter(o => (o.sources || []).includes(id)).slice(0, 4).map(o => o.id);
+    return ALL_ORGS.filter(o => (o.sources || []).includes(id)).slice(0, 10).map(o => o.id);
   }, [sourceId, ALL_ORGS]);
 
   const targetOrgs = useMemo(() => {

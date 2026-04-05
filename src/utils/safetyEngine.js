@@ -2,8 +2,9 @@
  * DATA-DRIVEN CLINICAL SAFETY ENGINE (v11.0)
  * Parses renal (eGFR) and hepatic (Child-Pugh) adjustment rules.
  */
-export function getSafetyStatus(abx, egfr, childPugh = 'A') {
+export function getSafetyStatus(abx, rawEgfr, childPugh = 'A') {
   if (!abx) return { type: 'neutral', label: 'NORMAL', note: 'Standard dose' };
+  const egfr = Number(rawEgfr);
 
   // 1. Check Hepatic Safety (Priority if defined)
   if (abx.hepatic) {

@@ -8,6 +8,8 @@ export const SOURCES = [
   { id: 'bact', l: '🩸 Bacteremia / Septicaemia', ico: '🩸', q: 'High lactate, hypotension, or blood culture positive?' },
   { id: 'mening', l: '🧠 Meningitis / CNS', ico: '🧠', q: 'Neck stiffness, photophobia, altered mental status?' },
   { id: 'osteo', l: '🦴 Osteomyelitis', ico: '🦴', q: 'Bone pain, non-healing ulcer, hardware infection?' },
-  { id: 'endo', l: '❤️ Endocarditis', ico: '❤️', q: 'New murmur, fever, splinter haemorrhages?' },
+  { id: 'endo', l: '❤️ Native Valve IE', ico: '❤️', q: 'New murmur, fever, splinter haemorrhages? (NVE)' },
+  { id: 'pve', l: '🏥❤️ Prosthetic Valve IE', ico: '🏥', q: 'Post-valve surgery? Early (<60d), Intermediate, or Late onset? (PVE)' },
+  { id: 'brain_abscess', l: '🧠 Brain Abscess', ico: '🧠', q: 'Fever, headache, altered mental status, focal neuro signs?' },
   { id: 'sti', l: '💊 STI / Genital Discharge', ico: '💊', q: 'Discharge, ulcer, or high-risk exposure?' },
 ];

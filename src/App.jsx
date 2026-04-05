@@ -186,7 +186,7 @@ function App() {
           <SafetyScreen 
             eGFR={eGFR} setEGFR={setEGFR} 
             childPugh={childPugh} setChildPugh={setChildPugh} 
-            currentRegimen={manualRegimen || (manualAbx.size === 0 ? availableRegimens[0] : null)} 
+            currentRegimen={manualAbx.size > 0 ? { abx: Array.from(manualAbx) } : availableRegimens[0]} 
             onNext={(opts) => {
               if (opts?.back) setActiveTab('advisor');
               else setActiveTab('culture');
@@ -199,7 +199,7 @@ function App() {
             activeSource={cultureSource} setSource={setCultureSource}
             labRecords={labRecords} onAddRecord={(s, o) => setLabRecords(prev => ({...prev, [s]: o}))}
             onRemoveRecord={(s) => {const n = {...labRecords}; delete n[s]; setLabRecords(n);}}
-            currentRegimen={manualRegimen || availableRegimens[0]} 
+            currentRegimen={manualAbx.size > 0 ? { abx: Array.from(manualAbx) } : availableRegimens[0]} 
             getCoverage={getCoverage} 
             onSkip={() => setActiveTab('safety')}
             onFinish={() => setActiveTab('summary')}
