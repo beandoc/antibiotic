@@ -113,6 +113,14 @@ function App() {
     });
   };
 
+  const selectAllDrugs = (ids) => {
+    setPickerSelection(new Set(ids));
+  };
+
+  const selectNoneDrugs = () => {
+    setPickerSelection(new Set());
+  };
+
   const confirmDrugPicker = () => {
     setManualAbx(new Set(pickerSelection));
     setShowDrugPicker(false);
@@ -222,6 +230,8 @@ function App() {
         <DrugPickerModal
           selectedAbx={pickerSelection}
           onToggle={togglePickerDrug}
+          onSelectAll={selectAllDrugs}
+          onSelectNone={selectNoneDrugs}
           onConfirm={confirmDrugPicker}
           onClose={() => setShowDrugPicker(false)}
         />

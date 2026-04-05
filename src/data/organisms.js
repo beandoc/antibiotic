@@ -1,8 +1,10 @@
 /**
  * FINAL CLINICALLY AUDITED PATHOGEN DATABASE
  * Alignment: Sanford Guide 2024 / IDSA GDLs
+ * Hardened: Taxonomy corrections and critical source mapping (Auerbach/Mandell 9th Ed)
  */
 export const ORGANISMS = [
+  // GRAM-POSITIVE COCCI
   { id: "org_0", name: "E. faecalis (VS)", category: "gpc", sources: ["bact", "uti_comp", "endo", "iab"] },
   { id: "org_1", name: "E. faecium (VS)", category: "gpc", sources: ["bact", "endo"] },
   { id: "org_2", name: "E. faecalis (VRE)", category: "gpc", sources: ["bact", "endo"], crit: 1 },
@@ -21,37 +23,56 @@ export const ORGANISMS = [
   { id: "org_15", name: "Strep. gp C,F,G", category: "gpc", sources: ["bact", "ssti"] },
   { id: "org_16", name: "Strep. pneumoniae", category: "gpc", sources: ["cap", "mening", "bact", "endo"] },
   { id: "org_17", name: "Viridans Strep.", category: "gpc", sources: ["bact", "endo"] },
+
+  // GRAM-POSITIVE RODS
   { id: "org_21", name: "L. monocytogenes", category: "gpb", sources: ["mening", "bact", "brain_abscess"] },
   { id: "org_22", name: "Nocardia sp.", category: "gpb", sources: ["cap", "ssti", "bact", "brain_abscess"] },
+  { id: "org_84", name: "C. urealyticum", category: "gpb", sources: ["uti_comp"] },
+
+  // GRAM-NEGATIVE ENTEROBACTERALES (GNE)
   { id: "org_23", name: "Aeromonas sp.", category: "gne", sources: ["bact", "iab", "ssti"] },
+  { id: "org_24", name: "C. freundii", category: "gne", sources: ["bact", "uti_comp", "hap"] },
+  { id: "org_25", name: "C. koseri", category: "gne", sources: ["bact", "uti_comp", "mening"] },
   { id: "org_26", name: "E. cloacae", category: "gne", sources: ["bact", "uti_comp", "hap"] },
-  { id: "org_27", name: "E. coli (S)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab", "ssti", "brain_abscess", "pve"] },
+  { id: "org_27", name: "E. coli (S)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab", "ssti"] },
   { id: "org_28", name: "E. coli (ESBL)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab"], crit: 1 },
+  { id: "org_29", name: "E. coli (KPC)", category: "gne", sources: ["bact", "uti_comp"], crit: 1 },
   { id: "org_30", name: "E. coli (MBL)", category: "gne", sources: ["bact", "uti_comp"], crit: 1 },
-  { id: "org_31", name: "Klebsiella pneu (S)", category: "gne", sources: ["bact", "uti_simple", "uti_comp", "hap", "iab", "brain_abscess", "pve"] },
+  { id: "org_31", name: "Klebsiella pneu (S)", category: "gne", sources: ["bact", "uti_simple", "uti_comp", "hap", "iab"] },
   { id: "org_33", name: "Klebsiella (ESBL)", category: "gne", sources: ["bact", "uti_comp", "hap", "uti_simple"], crit: 1 },
+  { id: "org_34", name: "Klebsiella (KPC)", category: "gne", sources: ["bact", "hap", "uti_comp"], crit: 1 },
   { id: "org_35", name: "Klebsiella (MBL)", category: "gne", sources: ["bact", "uti_comp"], crit: 1 },
   { id: "org_38", name: "P. mirabilis", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "ssti"] },
   { id: "org_42", name: "Serratia marcescens", category: "gne", sources: ["bact", "hap", "uti_comp"] },
+  { id: "org_55", name: "Klebsiella aerogenes", category: "gne", sources: ["bact", "hap", "uti_comp"] },
+  { id: "org_86", name: "EAEC (E. coli)", category: "gne", sources: ["gi_diarrhea"] },
+
+  // GRAM-NEGATIVE NON-ENTEROBACTERALES (GNN)
   { id: "org_56", name: "H. influenzae", category: "gnn", sources: ["cap", "mening", "ssti", "bact"] },
   { id: "org_60", name: "N. gonorrhoeae", category: "gnn", sources: ["sti", "bact"] },
   { id: "org_62", name: "N. meningitidis", category: "gnn", sources: ["mening", "bact"] },
+  { id: "org_73", name: "Bordetella pertussis", category: "gnn", sources: ["resp_pertussis"] },
+  { id: "org_75", name: "Campylobacter sp.", category: "gnn", sources: ["gi_diarrhea"] },
+  { id: "org_87", name: "Eikenella corrodens", category: "gnn", sources: ["ssti", "endo"] },
+  { id: "org_93", name: "Legionella sp.", category: "gnn", sources: ["cap", "hap"] },
+
+  // NON-FERMENTERS (NF)
   { id: "org_70", name: "Acinetobacter sp.", category: "nf", sources: ["bact", "hap", "uti_comp", "ssti"], crit: 1 },
-  { id: "org_71", name: "P. aeruginosa", category: "nf", sources: ["hap", "uti_comp", "bact", "ssti", "cap", "pve"], crit: 1 },
+  { id: "org_71", name: "P. aeruginosa", category: "nf", sources: ["hap", "uti_comp", "bact", "ssti", "cap"], crit: 1 },
   { id: "org_72", name: "S. maltophilia", category: "nf", sources: ["hap", "bact"], crit: 1 },
-  { id: "org_73", name: "Bordetella pertussis", category: "nf", sources: ["resp_pertussis"] },
   { id: "org_74", name: "Burkholderia cepacia", category: "nf", sources: ["hap", "bact"] },
-  { id: "org_75", name: "Campylobacter sp.", category: "gne", sources: ["gi_diarrhea"] },
+  { id: "org_88", name: "Elizabethkingia sp.", category: "nf", sources: ["mening", "hap", "bact"] },
+
+  // ANAEROBES (AN)
   { id: "org_76", name: "B. fragilis", category: "an", sources: ["iab", "bact", "ssti", "brain_abscess"] },
   { id: "org_77", name: "P. distasonis", category: "an", sources: ["iab", "bact"] },
   { id: "org_78", name: "Prevotella sp.", category: "an", sources: ["iab", "ssti", "brain_abscess"] },
   { id: "org_82", name: "C. difficile", category: "an", sources: ["gi_cdiff"] },
-  { id: "org_84", name: "C. urealyticum", category: "gpb", sources: ["uti_comp"] },
-  { id: "org_85", name: "Coxiella burnetii", category: "nf", sources: ["zoonotic_qfever"] },
-  { id: "org_86", name: "EAEC (E. coli)", category: "gne", sources: ["gi_diarrhea"] },
-  { id: "org_87", name: "Eikenella corrodens", category: "gnn", sources: ["ssti", "endo"] },
-  { id: "org_88", name: "Elizabethkingia sp.", category: "nf", sources: ["mening", "hap", "bact"] },
+  { id: "org_83", name: "Peptostreptococci", category: "an", sources: ["iab", "ssti"] },
   { id: "org_89", name: "Gardnerella vaginalis", category: "an", sources: ["sti"] },
-  { id: "org_90", name: "Klebsiella aerogenes", category: "gne", sources: ["bact", "hap", "uti_comp"] },
-  { id: "org_83", name: "Peptostreptococci", category: "an", sources: ["iab", "ssti", "cap"] }
+
+  // ATYPICALS / INTRACELLULAR (ATYP)
+  { id: "org_85", name: "Coxiella burnetii", category: "atyp", sources: ["zoonotic_qfever"] },
+  { id: "org_91", name: "M. pneumoniae", category: "atyp", sources: ["cap"] },
+  { id: "org_92", name: "Chlamydophila sp.", category: "atyp", sources: ["cap"] },
 ];

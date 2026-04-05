@@ -36,6 +36,17 @@ export const glycopeptides_lipopeptides = [
       org_73: 0, org_74: 0, org_75: 0, org_76: 0, org_77: 3, org_78: 2, org_79: 2, org_80: 2,
       org_81: 3, org_82: 3,
     },
+    renal: [
+      { egfr_min: 60, egfr_max: 999, dose: "Standard", type: "success" },
+      { egfr_min: 30, egfr_max: 59, dose: "1g q24h", type: "warning" },
+      { egfr_min: 15, egfr_max: 29, dose: "1g q48h", type: "warning" },
+      { egfr_min: -1, egfr_max: -1, dose: "Post-HD 1g", type: "danger" }
+    ],
+    monitoring: { 
+      type: "AUC/MIC", 
+      target: "400-600", 
+      note: "Check level after 3rd dose" 
+    }
   },
   {
     id: "abx_72",

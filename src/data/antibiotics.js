@@ -1,18 +1,18 @@
-import { penicillins } from './meds/penicillins';
-import { carbapenems } from './meds/carbapenems';
-import { monobactams } from './meds/monobactams';
-import { fluoroquinolones } from './meds/fluoroquinolones';
-import { cephalosporins_iv } from './meds/cephalosporins_iv';
-import { cephalosporins_po } from './meds/cephalosporins_po';
-import { aminoglycosides } from './meds/aminoglycosides';
-import { lincosamides } from './meds/lincosamides';
-import { macrolides } from './meds/macrolides';
-import { tetracyclines } from './meds/tetracyclines';
-import { glycopeptides_lipopeptides } from './meds/glycopeptides_lipopeptides';
-import { oxazolidinones } from './meds/oxazolidinones';
-import { miscellaneous } from './meds/miscellaneous';
+import { penicillins } from './meds/penicillins.js';
+import { carbapenems } from './meds/carbapenems.js';
+import { monobactams } from './meds/monobactams.js';
+import { fluoroquinolones } from './meds/fluoroquinolones.js';
+import { cephalosporins_iv } from './meds/cephalosporins_iv.js';
+import { cephalosporins_po } from './meds/cephalosporins_po.js';
+import { aminoglycosides } from './meds/aminoglycosides.js';
+import { lincosamides } from './meds/lincosamides.js';
+import { macrolides } from './meds/macrolides.js';
+import { tetracyclines } from './meds/tetracyclines.js';
+import { glycopeptides_lipopeptides } from './meds/glycopeptides_lipopeptides.js';
+import { oxazolidinones } from './meds/oxazolidinones.js';
+import { miscellaneous } from './meds/miscellaneous.js';
 
-import { RECS } from './recommendations';
+import { RECS } from './recommendations.js';
 
 /**
  * MASTER ANTIBIOTIC REGISTRY (Modularized)

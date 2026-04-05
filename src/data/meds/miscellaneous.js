@@ -208,4 +208,11 @@ export const miscellaneous = [
       org_81: 2, org_82: 1,
     },
   },
+  {
+    id: "abx_100",
+    name: "Dexamethasone",
+    class: "Steroid",
+    route: "IV",
+    coverage: {},
+  },
 ];

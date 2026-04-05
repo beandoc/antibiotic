@@ -1,10 +1,14 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ANTIBIOTICS, ANTIFUNGALS, ORGANISMS, AF_ORGS, SOURCES, RECOMMENDATIONS } from '../data';
 import { getCoverage, getRegimenCoverage } from '../utils/coverageEngine';
 import styles from './ScenarioAdvisor.module.css';
 import modalStyles from './DrugPickerModal.module.css';
 import { AlertTriangle, Plus, X, Search, ShieldAlert, CheckCircle, Info } from 'lucide-react';
 
+/**
+ * PATHOGEN PICKER MODAL
+ * Refactored: Uses crit: 1 flag for MDR badge detection (Bug 5 fix)
+ */
 function OrgPickerModal({ onAdd, onClose }) {
   const [search, setSearch] = useState('');
   const ALL_ORGS = useMemo(() => [...ORGANISMS, ...AF_ORGS], []);
@@ -28,7 +32,8 @@ function OrgPickerModal({ onAdd, onClose }) {
         </div>
         <div className={modalStyles.dpsBody}>
            {filtered.map(o => {
-             const isMdr = o.name.includes('ESBL') || o.name.includes('KPC') || o.name.includes('MBL') || o.name.includes('MRSA') || o.name.includes('VRE');
+             // Logic Fix (Bug 5): Use explicit crit flag from organism database
+             const isMdr = o.crit === 1;
              return (
                <button key={o.id} className={modalStyles.dpsDrugRow} onClick={() => { onAdd(o); onClose(); }}>
                  <div className={modalStyles.dpsNameRow}>
@@ -49,6 +54,10 @@ function OrgPickerModal({ onAdd, onClose }) {
   );
 }
 
+/**
+ * CLINICAL SCENARIO ADVISOR (v12.0)
+ * Hardened for high-stakes decision support.
+ */
 export function ScenarioAdvisor({ 
   sourceId, 
   riskModifiers = new Set(), 
@@ -65,14 +74,24 @@ export function ScenarioAdvisor({
 }) {
   const [showOrgPicker, setShowOrgPicker] = useState(false);
   const [cultureOrgs, setCultureOrgs] = useState([]);
+  const [confirmedGaps, setConfirmedGaps] = useState(false);
 
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
   const ALL_ORGS = useMemo(() => [...ORGANISMS, ...AF_ORGS], []);
   const ALL_DRUGS = useMemo(() => [...ANTIBIOTICS, ...ANTIFUNGALS], []);
 
+  // Reset gap confirmation when regimen changes
+  useEffect(() => {
+    setConfirmedGaps(false);
+  }, [selectedAbxSet]);
+
+  /**
+   * Logic Fix (Bug 1): Remove .slice(0, 10). 
+   * Always show all relevant pathogens for a source to prevent silent safety gaps.
+   */
   const baselineOrgIds = useMemo(() => {
     const id = sourceId || 'all';
-    return ALL_ORGS.filter(o => (o.sources || []).includes(id)).slice(0, 10).map(o => o.id);
+    return ALL_ORGS.filter(o => (o.sources || []).includes(id)).map(o => o.id);
   }, [sourceId, ALL_ORGS]);
 
   const targetOrgs = useMemo(() => {
@@ -111,19 +130,49 @@ export function ScenarioAdvisor({
   }, [targetOrgs, selectedAbxSet, astOverrides]);
 
   const gaps = targetOrgs.filter(org => coverageMap[org.id] < 2);
+  const criticalGaps = gaps.filter(g => g.crit === 1);
 
+  /**
+   * Logic Fix (Bug 3): Refined redundancy detection.
+   * Only triggers when MULTIPLE distinct drugs matching the profile are selected.
+   */
   const redundancies = useMemo(() => {
-    const counts = { anaerobes: 0, pseudomonas: 0 };
-    selectedAbxList.forEach(a => {
-       const n = a.name.toLowerCase();
-       if (n.includes('metro') || n.includes('tazo') || n.includes('mero')) counts.anaerobes++;
-       if (n.includes('tazo') || n.includes('mero') || n.includes('ceftaz') || n.includes('fepime')) counts.pseudomonas++;
-    });
+    const profiles = {
+      anaerobic: selectedAbxList.filter(a => {
+        const n = a.name.toLowerCase();
+        return n.includes('metro') || n.includes('tazo') || n.includes('mero') || n.includes('clinda');
+      }),
+      antipseudomonal: selectedAbxList.filter(a => {
+        const n = a.name.toLowerCase();
+        return n.includes('tazo') || n.includes('mero') || (n.includes('ceftaz') && !n.includes('avibac')) || n.includes('fepime');
+      })
+    };
+    
     const flags = [];
-    if (counts.anaerobes > 1) flags.push("Overlapping anaerobic cover.");
-    if (counts.pseudomonas > 1) flags.push("Multiple anti-pseudomonals.");
+    if (profiles.anaerobic.length > 1) flags.push(`Overlapping anaerobic cover (${profiles.anaerobic.map(a=>a.name).join(', ')})`);
+    if (profiles.antipseudomonal.length > 1) flags.push(`Multiple anti-pseudomonals (${profiles.antipseudomonal.map(a=>a.name).join(', ')})`);
     return flags;
   }, [selectedAbxList]);
+
+  const handleNext = () => {
+    if (criticalGaps.length > 0 && !confirmedGaps) {
+      setConfirmedGaps(true);
+      return;
+    }
+    onNext();
+  };
+
+  /**
+   * Logic Fix (Bug 2): Use stable RESCUE_MAP for drug lookup.
+   * Eliminates brittle name-string matching and adds missing KPC/MBL support.
+   */
+  const RESCUE_MAP = {
+    MRSA:  { id: 'abx_71', dose: '25mg/kg load IV' }, // Vancomycin
+    VRE:   { id: 'abx_76', dose: '600mg q12h' },      // Linezolid
+    ESBL:  { id: 'abx_16', dose: '1g q8h IV' },       // Meropenem
+    KPC:   { id: 'abx_40', dose: '2.5g q8h IV' },     // Ceftaz-Avibac
+    MBL:   { id: 'abx_19', dose: '2g q8h IV' },       // Aztreonam (+ Avi synergist)
+  };
 
   return (
     <div className={`${styles.advisorScreen} screen fade-in`}>
@@ -149,7 +198,10 @@ export function ScenarioAdvisor({
                     <div key={ri} className={`${styles.recCard} ${isAlreadySelected ? styles.recSelected : ''}`}>
                        <div className={styles.recHdr}>
                           <div className={styles.recTier}>Tier {rec.tier}</div>
-                          <div className={styles.recMatch}>{assessment.total}% Score</div>
+                          <div className={styles.recMatch}>
+                            {assessment.total}% Score
+                            {cultureOrgs.length > 0 && <span className={styles.cultBadge}>Updated</span>}
+                          </div>
                        </div>
                        <div className={styles.recBody}>
                           <strong className={styles.recName}>{rec.name}</strong>
@@ -160,9 +212,14 @@ export function ScenarioAdvisor({
                              })}
                           </div>
                           <div className={styles.recAnalysisRow}>
-                             {assessment.gaps.length < targetOrgs.length && (
+                             {assessment.covered.length > 0 && (
                                <div className={styles.recCovered}>
-                                  <strong>Covered:</strong> {targetOrgs.filter(o => !assessment.gaps.find(g => g.id === o.id)).map(o => o.name).join(', ')}
+                                  <strong>Reliable:</strong> {assessment.covered.map(o => o.name).join(', ')}
+                                </div>
+                             )}
+                             {assessment.variable?.length > 0 && (
+                               <div className={styles.recVariable}>
+                                  <strong>Variable (±):</strong> {assessment.variable.map(o => o.name).join(', ')}
                                </div>
                              )}
                              {assessment.gaps.length > 0 && (
@@ -252,7 +309,8 @@ export function ScenarioAdvisor({
                      <div key={org.id} className={styles.advCovRow}>
                         <span className={styles.orgName}>{org.name}</span>
                         <span className={coverage >= 2 ? styles.badgeReliable : coverage === 1 ? styles.badgeWarning : styles.badgeNone}>
-                           {coverage >= 2 ? 'RELIABLE' : coverage === 1 ? 'INTERMEDIATE' : 'INADEQUATE'}
+                           {/* UX Change (Issue 6): Use VARIABLE instead of INTERMEDIATE to avoid microbiology confusion */}
+                           {coverage >= 2 ? 'RELIABLE' : coverage === 1 ? 'VARIABLE ±' : 'INADEQUATE'}
                         </span>
                      </div>
                   );
@@ -261,21 +319,27 @@ export function ScenarioAdvisor({
 
             {gaps.length > 0 && (
                <div className={styles.remediationCard}>
-                  <div className={styles.remedHdr}><ShieldAlert size={18} /> CRITICAL COVERAGE GAP</div>
+                  <div className={styles.remedHdr}><ShieldAlert size={18} /> COVERAGE GAP IDENTIFIED</div>
                   <div className={styles.remedList}>
-                     {Array.from(new Set(gaps.map(g => (g.name.includes('MRSA') ? 'MRSA_VANC' : g.name.includes('VRE') ? 'VRE_LINE' : g.id)))).map(key => {
-                        const g = gaps.find(x => (x.name.includes('MRSA') && key === 'MRSA_VANC') || (x.name.includes('VRE') && key === 'VRE_LINE') || x.id === key);
-                        if (!g) return null;
+                     {gaps.map(g => {
+                        const isMdr = g.crit === 1;
+                        let rescue = null;
                         
-                        const rescueDrug = (g.name.includes('MRSA')) ? ALL_DRUGS.find(a => a.name === 'Vancomycin') : 
-                                          (g.name.includes('VRE')) ? ALL_DRUGS.find(a => a.name === 'Linezolid') : null;
-                        const dose = rescueDrug ? (g.name.includes('MRSA') ? "25mg/kg" : "600mg BD") : "";
-                        
+                        // Rescue Logic: Match against predefined clinical keys
+                        if (g.name.includes('MRSA')) rescue = RESCUE_MAP.MRSA;
+                        else if (g.name.includes('VRE')) rescue = RESCUE_MAP.VRE;
+                        else if (g.name.includes('ESBL')) rescue = RESCUE_MAP.ESBL;
+                        else if (g.name.includes('KPC')) rescue = RESCUE_MAP.KPC;
+                        else if (g.name.includes('MBL')) rescue = RESCUE_MAP.MBL;
+
+                        const rescueDrug = rescue ? ALL_DRUGS.find(a => String(a.id) === String(rescue.id)) : null;
+
                         return (
-                           <div key={key} className={styles.remedItem}>
+                           <div key={g.id} className={`${styles.remedItem} ${isMdr ? styles.critical : ''}`}>
                               <div className={styles.remedLabel}>
-                                 <strong>{g.name.includes('MRSA') ? 'All MRSA' : g.name.includes('VRE') ? 'All VRE' : g.name}</strong>
-                                 {rescueDrug && <span>Suggested: {rescueDrug.name} {dose}</span>}
+                                 <strong>{g.name}</strong>
+                                 {isMdr && <span className={styles.critBadge}>MDR</span>}
+                                 {rescueDrug && <span>Suggested: {rescueDrug.name} {rescue.dose}</span>}
                               </div>
                               {rescueDrug && !selectedAbxSet.has(rescueDrug.id) && (
                                  <button className={styles.remedAddBtn} onClick={() => onToggleAbx(rescueDrug.id)}>
@@ -292,16 +356,29 @@ export function ScenarioAdvisor({
       </div>
 
       <div className={styles.advActionFooter}>
-         <button className={styles.finalBtn} onClick={onNext}>
-            {gaps.length > 0 ? (
-              <><AlertTriangle size={18} /> Proceed with {gaps.length} critical gap{gaps.length > 1 ? 's' : ''} ⚠</>
+         <button 
+           className={`${styles.finalBtn} ${confirmedGaps ? styles.btnConfirmed : ''}`} 
+           onClick={handleNext}
+         >
+            {criticalGaps.length > 0 && !confirmedGaps ? (
+               <><AlertTriangle size={18} /> {criticalGaps.length} MDR GAP{criticalGaps.length > 1 ? 'S' : ''}: TAP TO CONFIRM</>
+            ) : gaps.length > 0 ? (
+               <><Info size={18} /> Proceed with {gaps.length} gap{gaps.length > 1 ? 's' : ''} ⚠</>
             ) : (
-              'Confirm & Finalize Plan ▸'
+               'Confirm & Finalize Plan ▸'
             )}
          </button>
       </div>
 
-      {showOrgPicker && <OrgPickerModal onAdd={o => setCultureOrgs(prev => [...prev, o])} onClose={() => setShowOrgPicker(false)} />}
+      {showOrgPicker && (
+        <OrgPickerModal 
+          onAdd={o => {
+            // Logic Fix (Bug 4): Prevent duplicate culture organisms
+            setCultureOrgs(prev => prev.find(x => x.id === o.id) ? prev : [...prev, o]);
+          }} 
+          onClose={() => setShowOrgPicker(false)} 
+        />
+      )}
     </div>
   );
 }

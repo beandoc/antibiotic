@@ -17,6 +17,16 @@ export const aminoglycosides = [
       org_73: 0, org_74: 0, org_75: 0, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
       org_81: 0, org_82: 0,
     },
+    renal: [
+      { egfr_min: 60, egfr_max: 999, dose: "Standard", type: "success" },
+      { egfr_min: 30, egfr_max: 59, dose: "5mg/kg q36h", type: "warning" },
+      { egfr_min: -1, egfr_max: -1, dose: "Post-HD 2mg/kg", type: "danger" }
+    ],
+    monitoring: { 
+      type: "Peak/Trough", 
+      target: "Stable Peak/Trough", 
+      note: "Gentamicin levels req for safety" 
+    }
   },
   {
     id: "abx_56",
