@@ -7,7 +7,7 @@ export const carbapenems = [
     coverage: {
       org_0: 0, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 3, org_13: 3, org_14: 3, org_15: 3, org_16: 3,
-      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 2, org_22: 2, org_23: 3, org_24: 3,
+      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 1, org_22: 2, org_23: 3, org_24: 3,
       org_25: 3, org_26: 3, org_27: 3, org_28: 3, org_29: 1, org_30: 0, org_31: 3, org_32: 3,
       org_33: 3, org_34: 1, org_35: 0, org_36: 3, org_37: 3, org_38: 3, org_39: 3, org_40: 3,
       org_41: 3, org_42: 3, org_43: 3, org_44: 3, org_45: 0, org_46: 0, org_47: 1, org_48: 0,
@@ -26,7 +26,7 @@ export const carbapenems = [
     coverage: {
       org_0: 0, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 3, org_13: 3, org_14: 3, org_15: 3, org_16: 3,
-      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 2, org_22: 0, org_23: 3, org_24: 3,
+      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 1, org_22: 0, org_23: 3, org_24: 3,
       org_25: 3, org_26: 3, org_27: 3, org_28: 3, org_29: 0, org_30: 0, org_31: 3, org_32: 3,
       org_33: 3, org_34: 0, org_35: 0, org_36: 3, org_37: 3, org_38: 3, org_39: 3, org_40: 3,
       org_41: 3, org_42: 3, org_43: 3, org_44: 3, org_45: 0, org_46: 0, org_47: 1, org_48: 0,
@@ -45,7 +45,7 @@ export const carbapenems = [
     coverage: {
       org_0: 2, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 3, org_13: 3, org_14: 3, org_15: 3, org_16: 3,
-      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 3, org_22: 2, org_23: 3, org_24: 3,
+      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 1, org_22: 2, org_23: 3, org_24: 3,
       org_25: 3, org_26: 3, org_27: 3, org_28: 3, org_29: 1, org_30: 0, org_31: 3, org_32: 3,
       org_33: 3, org_34: 1, org_35: 0, org_36: 3, org_37: 3, org_38: 3, org_39: 3, org_40: 3,
       org_41: 3, org_42: 3, org_43: 3, org_44: 3, org_45: 0, org_46: 0, org_47: 1, org_48: 0,
@@ -64,7 +64,7 @@ export const carbapenems = [
     coverage: {
       org_0: 2, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 3, org_13: 3, org_14: 3, org_15: 3, org_16: 3,
-      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 3, org_22: 2, org_23: 3, org_24: 3,
+      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 1, org_22: 2, org_23: 3, org_24: 3,
       org_25: 3, org_26: 3, org_27: 3, org_28: 3, org_29: 3, org_30: 0, org_31: 3, org_32: 3,
       org_33: 3, org_34: 3, org_35: 0, org_36: 3, org_37: 3, org_38: 3, org_39: 3, org_40: 3,
       org_41: 3, org_42: 3, org_43: 3, org_44: 3, org_45: 0, org_46: 0, org_47: 1, org_48: 0,
@@ -83,7 +83,7 @@ export const carbapenems = [
     coverage: {
       org_0: 1, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 3, org_13: 3, org_14: 3, org_15: 3, org_16: 3,
-      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 3, org_22: 2, org_23: 3, org_24: 3,
+      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 1, org_22: 2, org_23: 3, org_24: 3,
       org_25: 3, org_26: 3, org_27: 3, org_28: 3, org_29: 1, org_30: 0, org_31: 3, org_32: 3,
       org_33: 3, org_34: 1, org_35: 0, org_36: 3, org_37: 3, org_38: 3, org_39: 3, org_40: 3,
       org_41: 3, org_42: 3, org_43: 3, org_44: 3, org_45: 0, org_46: 0, org_47: 1, org_48: 0,
@@ -102,7 +102,7 @@ export const carbapenems = [
     coverage: {
       org_0: 1, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 3, org_13: 3, org_14: 3, org_15: 3, org_16: 3,
-      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 3, org_22: 2, org_23: 3, org_24: 3,
+      org_17: 2, org_18: 2, org_19: 2, org_20: 0, org_21: 1, org_22: 2, org_23: 3, org_24: 3,
       org_25: 3, org_26: 3, org_27: 3, org_28: 3, org_29: 3, org_30: 0, org_31: 3, org_32: 3,
       org_33: 3, org_34: 3, org_35: 0, org_36: 3, org_37: 3, org_38: 3, org_39: 3, org_40: 3,
       org_41: 3, org_42: 3, org_43: 3, org_44: 3, org_45: 0, org_46: 0, org_47: 1, org_48: 0,

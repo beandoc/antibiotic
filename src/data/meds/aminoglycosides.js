@@ -5,7 +5,7 @@ export const aminoglycosides = [
     class: "Aminoglycosides",
     route: "IV",
     coverage: {
-      org_0: 1, org_1: 1, org_2: 1, org_3: 1, org_4: 1, org_5: 1, org_6: 1, org_7: 1, org_8: 1,
+      org_0: 0, org_1: 0, org_2: 1, org_3: 1, org_4: 1, org_5: 1, org_6: 1, org_7: 1, org_8: 1,
       org_9: 1, org_10: 1, org_11: 0, org_12: 0, org_13: 0, org_14: 0, org_15: 0, org_16: 0,
       org_17: 0, org_18: 0, org_19: 0, org_20: 0, org_21: 1, org_22: 1, org_23: 3, org_24: 2,
       org_25: 3, org_26: 2, org_27: 3, org_28: 2, org_29: 2, org_30: 2, org_31: 3, org_32: 3,

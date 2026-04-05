@@ -15,7 +15,7 @@ export const fluoroquinolones = [
       org_57: 2, org_58: 0, org_59: 3, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
       org_65: 3, org_66: 3, org_67: 3, org_68: 3, org_69: 1, org_70: 0, org_71: 3, org_72: 1,
       org_73: 1, org_74: 1, org_75: 1, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 0, org_82: 0,
+      org_81: 0, org_82: 0, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -31,10 +31,10 @@ export const fluoroquinolones = [
       org_33: 2, org_34: 2, org_35: 2, org_36: 2, org_37: 2, org_38: 2, org_39: 2, org_40: 2,
       org_41: 2, org_42: 2, org_43: 2, org_44: 2, org_45: 0, org_46: 1, org_47: 0, org_48: 1,
       org_49: 1, org_50: 1, org_51: 1, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 2,
-      org_57: 1, org_58: 0, org_59: 2, org_60: 0, org_61: 2, org_62: 2, org_63: 2, org_64: 0,
+      org_57: 1, org_58: 0, org_59: 2, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
       org_65: 2, org_66: 2, org_67: 2, org_68: 2, org_69: 1, org_70: 1, org_71: 2, org_72: 1,
       org_73: 1, org_74: 1, org_75: 1, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 1, org_82: 0,
+      org_81: 1, org_82: 0, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -50,10 +50,10 @@ export const fluoroquinolones = [
       org_33: 1, org_34: 1, org_35: 1, org_36: 2, org_37: 2, org_38: 2, org_39: 2, org_40: 2,
       org_41: 2, org_42: 2, org_43: 2, org_44: 2, org_45: 0, org_46: 1, org_47: 0, org_48: 2,
       org_49: 1, org_50: 2, org_51: 2, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 2,
-      org_57: 2, org_58: 0, org_59: 2, org_60: 0, org_61: 2, org_62: 2, org_63: 2, org_64: 0,
+      org_57: 2, org_58: 0, org_59: 2, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
       org_65: 2, org_66: 2, org_67: 2, org_68: 2, org_69: 1, org_70: 0, org_71: 2, org_72: 1,
       org_73: 1, org_74: 1, org_75: 1, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 0, org_82: 0,
+      org_81: 0, org_82: 0, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -64,15 +64,15 @@ export const fluoroquinolones = [
     coverage: {
       org_0: 2, org_1: 0, org_2: 0, org_3: 0, org_4: 2, org_5: 0, org_6: 2, org_7: 0, org_8: 0,
       org_9: 2, org_10: 2, org_11: 2, org_12: 2, org_13: 2, org_14: 2, org_15: 2, org_16: 3,
-      org_17: 2, org_18: 1, org_19: 1, org_20: 0, org_21: 1, org_22: 1, org_23: 3, org_24: 2,
-      org_25: 3, org_26: 2, org_27: 3, org_28: 1, org_29: 1, org_30: 1, org_31: 3, org_32: 3,
-      org_33: 1, org_34: 1, org_35: 1, org_36: 2, org_37: 2, org_38: 3, org_39: 2, org_40: 2,
+      org_17: 2, org_18: 1, org_19: 1, org_20: 0, org_21: 0, org_22: 1, org_23: 3, org_24: 2,
+      org_25: 3, org_26: 2, org_27: 3, org_28: 1, org_29: 0, org_30: 0, org_31: 3, org_32: 3,
+      org_33: 1, org_34: 0, org_35: 0, org_36: 2, org_37: 2, org_38: 3, org_39: 2, org_40: 2,
       org_41: 3, org_42: 2, org_43: 3, org_44: 3, org_45: 0, org_46: 1, org_47: 0, org_48: 2,
       org_49: 1, org_50: 2, org_51: 2, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 3,
-      org_57: 2, org_58: 0, org_59: 3, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
-      org_65: 3, org_66: 3, org_67: 3, org_68: 3, org_69: 1, org_70: 1, org_71: 2, org_72: 2,
-      org_73: 2, org_74: 2, org_75: 2, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 1, org_82: 0,
+      org_57: 2, org_58: 0, org_59: 3, org_60: 1, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
+      org_65: 3, org_66: 3, org_67: 3, org_68: 3, org_69: 1, org_70: 1, org_71: 2, org_72: 1,
+      org_73: 2, org_74: 1, org_75: 2, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
+      org_81: 1, org_82: 0, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -87,11 +87,11 @@ export const fluoroquinolones = [
       org_25: 2, org_26: 2, org_27: 2, org_28: 1, org_29: 1, org_30: 1, org_31: 2, org_32: 2,
       org_33: 1, org_34: 1, org_35: 1, org_36: 2, org_37: 2, org_38: 2, org_39: 2, org_40: 2,
       org_41: 2, org_42: 2, org_43: 2, org_44: 2, org_45: 0, org_46: 1, org_47: 0, org_48: 1,
-      org_49: 1, org_50: 2, org_51: 2, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 2,
-      org_57: 2, org_58: 0, org_59: 3, org_60: 0, org_61: 2, org_62: 2, org_63: 2, org_64: 0,
+      org_49: 1, org_50: 2, org_51: 2, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 3,
+      org_57: 2, org_58: 0, org_59: 3, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
       org_65: 2, org_66: 2, org_67: 2, org_68: 2, org_69: 1, org_70: 1, org_71: 0, org_72: 1,
       org_73: 2, org_74: 2, org_75: 2, org_76: 2, org_77: 2, org_78: 2, org_79: 0, org_80: 2,
-      org_81: 1, org_82: 2,
+      org_81: 1, org_82: 2, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -107,10 +107,10 @@ export const fluoroquinolones = [
       org_33: 1, org_34: 0, org_35: 0, org_36: 1, org_37: 1, org_38: 2, org_39: 1, org_40: 1,
       org_41: 2, org_42: 1, org_43: 2, org_44: 2, org_45: 0, org_46: 0, org_47: 0, org_48: 0,
       org_49: 0, org_50: 0, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 0, org_56: 2,
-      org_57: 0, org_58: 0, org_59: 0, org_60: 0, org_61: 2, org_62: 0, org_63: 0, org_64: 0,
+      org_57: 0, org_58: 0, org_59: 0, org_60: 0, org_61: 3, org_62: 0, org_63: 0, org_64: 0,
       org_65: 2, org_66: 1, org_67: 1, org_68: 1, org_69: 0, org_70: 0, org_71: 1, org_72: 0,
       org_73: 0, org_74: 0, org_75: 0, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 0, org_82: 0,
+      org_81: 0, org_82: 0, org_91: 2, org_92: 2, org_93: 2
     },
   },
   {
@@ -126,10 +126,10 @@ export const fluoroquinolones = [
       org_33: 1, org_34: 0, org_35: 0, org_36: 1, org_37: 1, org_38: 2, org_39: 1, org_40: 1,
       org_41: 2, org_42: 1, org_43: 2, org_44: 2, org_45: 0, org_46: 0, org_47: 0, org_48: 0,
       org_49: 0, org_50: 0, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 0, org_56: 2,
-      org_57: 0, org_58: 0, org_59: 0, org_60: 0, org_61: 2, org_62: 0, org_63: 0, org_64: 0,
+      org_57: 0, org_58: 0, org_59: 0, org_60: 0, org_61: 3, org_62: 0, org_63: 0, org_64: 0,
       org_65: 2, org_66: 1, org_67: 1, org_68: 1, org_69: 0, org_70: 0, org_71: 1, org_72: 0,
       org_73: 0, org_74: 0, org_75: 0, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 0, org_82: 0,
+      org_81: 0, org_82: 0, org_91: 2, org_92: 2, org_93: 2
     },
   },
   {
@@ -145,10 +145,10 @@ export const fluoroquinolones = [
       org_33: 1, org_34: 0, org_35: 0, org_36: 1, org_37: 1, org_38: 2, org_39: 1, org_40: 1,
       org_41: 2, org_42: 1, org_43: 2, org_44: 2, org_45: 0, org_46: 1, org_47: 0, org_48: 1,
       org_49: 1, org_50: 2, org_51: 2, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 2,
-      org_57: 2, org_58: 0, org_59: 3, org_60: 0, org_61: 2, org_62: 2, org_63: 2, org_64: 0,
+      org_57: 2, org_58: 0, org_59: 3, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
       org_65: 2, org_66: 2, org_67: 2, org_68: 2, org_69: 1, org_70: 1, org_71: 1, org_72: 0,
       org_73: 1, org_74: 1, org_75: 1, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 1, org_82: 0,
+      org_81: 1, org_82: 0, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -163,11 +163,11 @@ export const fluoroquinolones = [
       org_25: 2, org_26: 2, org_27: 2, org_28: 1, org_29: 1, org_30: 0, org_31: 2, org_32: 2,
       org_33: 1, org_34: 1, org_35: 0, org_36: 2, org_37: 2, org_38: 2, org_39: 2, org_40: 2,
       org_41: 2, org_42: 2, org_43: 2, org_44: 2, org_45: 0, org_46: 0, org_47: 0, org_48: 0,
-      org_49: 0, org_50: 2, org_51: 0, org_52: 0, org_53: 2, org_54: 0, org_55: 0, org_56: 2,
-      org_57: 2, org_58: 0, org_59: 2, org_60: 0, org_61: 2, org_62: 2, org_63: 2, org_64: 0,
+      org_49: 0, org_50: 2, org_51: 0, org_52: 0, org_53: 2, org_54: 2, org_55: 1, org_56: 3,
+      org_57: 2, org_58: 0, org_59: 2, org_60: 0, org_61: 3, org_62: 2, org_63: 2, org_64: 0,
       org_65: 2, org_66: 2, org_67: 2, org_68: 2, org_69: 0, org_70: 0, org_71: 0, org_72: 0,
       org_73: 0, org_74: 0, org_75: 0, org_76: 0, org_77: 0, org_78: 0, org_79: 0, org_80: 0,
-      org_81: 1, org_82: 0,
+      org_81: 1, org_82: 0, org_91: 3, org_92: 3, org_93: 3
     },
   },
 ];

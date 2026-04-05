@@ -6,10 +6,22 @@
 export const RECS = {
   all: [
     {
-      tier: 1, name: 'Empiric Sepsis / UNDIFFERENTIATED',
+      tier: 1, name: 'Empiric Sepsis (Standard)',
       abx: ["abx_11", "abx_71"], // Pip-Tazo + Vancomycin
       notes: 'Initial choice for undifferentiated source. Covers MRSA, Pseudomonas, and major Gram-negatives.',
-      miss: ['VRE', 'MBL-producers', 'Elizabethkingia']
+      miss: ['ESBL (High-risk)', 'KPC', 'MBL', 'VRE']
+    },
+    {
+      tier: 2, name: 'Sepsis (ESBL / Hospital-acquired Risk)',
+      abx: ["abx_16", "abx_71"], // Meropenem + Vancomycin
+      notes: 'Escalate to carbapenem if prior ESBL history or recent broad-spectrum failure. Prevents treatment failure seen with Pip-Tazo in ESBL bacteremia.',
+      miss: ['KPC', 'MBL', 'VRE']
+    },
+    {
+      tier: 3, name: 'Sepsis (MDR / CPE Risk)',
+      abx: ["abx_40", "abx_19", "abx_71"], // Ceftaz-Avibac + Aztreonam + Vancomycin
+      notes: 'Extensive cover for suspected Carbapenemase producers. Ceftaz-Avi/Aztreonam synergy mandatory for MBL/NDM coverage.',
+      miss: ['VRE']
     }
   ],
 
@@ -30,23 +42,35 @@ export const RECS = {
   ],
   hap: [
     {
-      tier: 1, name: 'Elizabethkingia anophelis (Targeted)',
-      abx: ["abx_66", "abx_83"], // Minocycline + Rifampicin
-      notes: 'Elizabethkingia is INTRINSICALLY RESISTANT to beta-lactams/carbapenems. Use Minocycline + Rifampicin. Consult ID specialist mandatory.',
-      miss: ['All beta-lactams']
+      tier: 1, name: 'HAP/VAP Empiric (Standard Tier)',
+      abx: ["abx_38", "abx_71"], // Cefepime + Vancomycin
+      notes: 'IDSA 2016 Preference. Standard empiric for HAP/VAP covering Pseudomonas and MRSA. Use Cefepime 2g q8h.',
+      miss: ['ESBL', 'MBL']
     },
     {
-      tier: 2, name: 'Klebsiella aerogenes / Enterobacter / AmpC',
-      abx: ["abx_38", "abx_71"], // Cefepime + Vancomycin
-      notes: 'Cefepime (Preferred Tier) for AmpC. AVOID Ceftriaxone even if "S" due to 5-20% inducible resistance.',
+      tier: 2, name: 'HAP/VAP (Alternative Tier)',
+      abx: ["abx_11", "abx_71"], // Pip-Tazo + Vancomycin
+      notes: 'Alternative empiric covering Pseudomonas, MRSA, and anaerobes (if aspiration risk).',
       miss: ['ESBL', 'MBL']
+    },
+    {
+      tier: 3, name: 'Elizabethkingia anophelis (Targeted)',
+      abx: ["abx_66", "abx_83"], // Minocycline + Rifampicin
+      notes: 'For confirmed Elizabethkingia (intrinsically BL-resistant). ID specialist consult mandatory.',
+      miss: ['Standard GNB']
     }
   ],
   resp_pertussis: [
     {
       tier: 1, name: 'Whooping Cough (Preferred)',
       abx: ["abx_61"], // Azithromycin
-      notes: 'Preferred 1st line. Adult/Child: 500mg x 1, then 250mg. Infant <2m: 10mg/kg x 5 days.',
+      notes: 'Adult/Child: 500mg x 1, then 250mg. Infant <2m: 10mg/kg x 5 days.',
+      miss: ['None']
+    },
+    {
+      tier: 2, name: 'Alternative (Adults / Intolerance)',
+      abx: ["abx_62", "abx_84"], // Clarithromycin, TMP-SMX
+      notes: 'Clarithromycin 500mg bid x 7d OR TMP-SMX DS bid x 14d. Use if macrolide-intolerant or QT-prolongation risk.',
       miss: ['None']
     }
   ],
@@ -55,7 +79,7 @@ export const RECS = {
   bact: [
     {
       tier: 1, name: 'Class B: MBL / NDM Sepsis (IDSA 2024)',
-      abx: ["abx_37", "abx_19"], // Ceftazidime-avibactam + Aztreonam
+      abx: ["abx_40", "abx_19"], // Ceftazidime-avibactam + Aztreonam
       notes: 'Synergy combo for NDM/VIM. Avibactam protects Aztreonam from hydrolysis by co-carried ESBLs.',
       miss: ['Gram-positives']
     },
@@ -90,19 +114,31 @@ export const RECS = {
       abx: ["abx_36", "abx_71", "abx_7", "abx_100"], // Ceftriaxone + Vancomycin + Ampicillin + Dex
       notes: 'Ampicillin 2g IV q4h is MANDATORY for Listeria coverage in patients >50y, alcoholic, or pregnant.',
       miss: ['None']
+    },
+    {
+      tier: 2, name: 'Neonatal Meningitis (GBS/E. coli)',
+      abx: ["abx_7", "abx_55"], // Ampicillin + Gentamicin
+      notes: 'Empiric for neonates. Covers GBS, E. coli, and Listeria. Swap Gent for Cefotaxime if higher CNS penetration required.',
+      miss: ['Staph']
     }
   ],
   endo: [
     {
-      tier: 1, name: 'VRE Endocarditis (AHA/ESC 2023)',
+      tier: 1, name: 'Standard NVE Empiric (Acute)',
+      abx: ["abx_71", "abx_55"], // Vancomycin + Gentamicin
+      notes: 'AHA 2023. Standard empiric for acute native valve IE. Gentamicin dose should be short-course (3-5 days) to minimize nephrotoxicity.',
+      miss: ['VRE']
+    },
+    {
+      tier: 2, name: 'VRE Endocarditis (AHA/ESC 2023)',
       abx: ["abx_76"], // Linezolid
-      notes: 'Linezolid 600mg IV/PO q12h x 6 weeks. High-dose Daptomycin + Ampicillin is an alternative (ID/specialist consult).',
+      notes: 'Linezolid 600mg IV/PO q12h x 6 weeks. High-dose Daptomycin + Ampicillin is an alternative.',
       miss: ['Gram-negatives']
     },
     {
-      tier: 2, name: 'HACEK / Eikenella',
+      tier: 3, name: 'HACEK / Eikenella',
       abx: ["abx_36"], // Ceftriaxone
-      notes: 'Ceftriaxone 2g IV. Eikenella is resistant to metronidazole/clindamycin. Diagnostic "Clue": Agar pitting.',
+      notes: 'Standard Tier for HACEK. Eikenella is resistant to metronidazole/clindamycin.',
       miss: ['Staph']
     }
   ],
@@ -118,30 +154,36 @@ export const RECS = {
   // 💩 GASTROINTESTINAL
   gi_cdiff: [
     {
-      tier: 1, name: 'C. diff (IDSA 2021)',
-      abx: ["abx_83"], // Fidaxomicin (wait, check ID)
-      notes: 'Preferred line (200mg po bid x 10d). Oral Vancomycin alternative. IV Vancomycin is INEFFECTIVE.',
+      tier: 1, name: 'C. diff (IDSA 2021 Preferred)',
+      abx: ["abx_94"], // Fidaxomicin
+      notes: 'Preferred 1st line (200mg po bid x 10d). Lower recurrence rate than Vancomycin.',
       miss: ['Systemic infection']
     },
     {
-      tier: 2, name: 'Fulminant C. diff Sepsis',
-      abx: ["abx_71", "abx_89"], // Oral Vancomycin (ID abx_71? wait) + IV Metronidazole
-      notes: 'Vancomycin 500mg q6h po + Metronidazole 500mg IV q8h. Add rectal vanc if ileus present.',
+      tier: 2, name: 'C. diff (Alternative Tier)',
+      abx: ["abx_95"], // Vancomycin (PO)
+      notes: '125mg po qid x 10 days. IV Vancomycin is INEFFECTIVE for luminal C. diff.',
+      miss: ['Systemic infection']
+    },
+    {
+      tier: 3, name: 'Fulminant Sepsis-C. diff',
+      abx: ["abx_95", "abx_89"], // Oral Vancomycin + IV Metronidazole
+      notes: 'Vancomycin 500mg q6h po + Metronidazole 500mg IV q8h. Add rectal Vanc if ileus present.',
       miss: ['None']
     }
   ],
   gi_diarrhea: [
     {
-      tier: 1, name: 'Campylobacter / Travelers Diarrhea',
+      tier: 1, name: 'Empiric Bacterial Diarrhea (IDSA)',
       abx: ["abx_61"], // Azithromycin
-      notes: 'Azithromycin (500mg x 3d) is drug of choice. Campylobacter is RESISTANT to Cephalosporins/TMP-SMX.',
-      miss: ['Fluoroquinolone-resistance']
+      notes: 'Covers Campylobacter (preferred), Salmonella, and Shigella. 500mg po daily x 3 days.',
+      miss: ['Viral']
     },
     {
-      tier: 2, name: 'EAEC / Travelers (Prolonged)',
-      abx: ["abx_20", "abx_9"], // Cipro + Amox-Clav (wait Rifaximin)
-      notes: 'Cipro 750mg po x 3 days. Rifaximin improves duration. Indicated for persistent diarrhea in HIV/Children.',
-      miss: ['Viral']
+      tier: 2, name: 'Alternative (Adults/Travelers)',
+      abx: ["abx_20"], // Ciprofloxacin
+      notes: 'Cipro 750mg po x 3 days. Use for Salmonella/Shigella if NOT suspected Campylobacter (high FQ-R).',
+      miss: ['Campylobacter (FQ-resistant)']
     }
   ],
 
@@ -250,10 +292,16 @@ export const RECS = {
   // 🥙 INTRA-ABDOMINAL
   iab: [
     {
-      tier: 1, name: 'IAB / B. fragilis group',
-      abx: ["abx_11", "abx_89"], // Pip-Tazo + Metronidazole
-      notes: 'Metronidazole is 10/10 for B. fragilis group (highly virulent). Covers 1011 microorganisms per gram of feces.',
-      miss: ['ESBL E. coli']
+      tier: 1, name: 'IAB Empiric (Monotherapy)',
+      abx: ["abx_11"], // Pip-Tazo
+      notes: 'Preferred first-line. Pip-Tazo has excellent anaerobic coverage (including B. fragilis); Metronidazole addition is redundant.',
+      miss: ['ESBL', 'MBL']
+    },
+    {
+      tier: 2, name: 'Severe IAB / MDR Risk',
+      abx: ["abx_16"], // Meropenem
+      notes: 'Used for ESBL history or high-severity ICU-acquired peritonitis.',
+      miss: ['KPC', 'MBL']
     }
   ],
 
@@ -262,7 +310,7 @@ export const RECS = {
     {
       tier: 1, name: 'Q Fever (Coxiella burnetii)',
       abx: ["abx_64"], // Doxycycline
-      notes: '100mg po bid x 14 days. Aerosol source (Farms). Doxy + Hydroxychloroquine if chronic.',
+      notes: '100mg po bid x 14 days. If pregnant (Doxy contraindicated), use TMP-SMX DS bid. Doxy + Hydroxychloroquine if chronic.',
       miss: ['None']
     }
   ],
@@ -270,7 +318,19 @@ export const RECS = {
   // 💊 STI / BV
   sti: [
     {
-      tier: 1, name: 'Bacterial Vaginosis (Gardnerella)',
+      tier: 1, name: 'Gonorrhoea (CDC 2021)',
+      abx: ["abx_36"], // Ceftriaxone
+      notes: '500mg IM x 1 dose (1g if >150kg). Dual therapy with Azithro is no longer recommended.',
+      miss: ['Chlamydia (if not excluded)']
+    },
+    {
+      tier: 1, name: 'Chlamydia trachomatis (CDC)',
+      abx: ["abx_64"], // Doxycycline
+      notes: '100mg po bid x 7 days. Preferred over Azithromycin (higher cure rates for rectal/urogenital).',
+      miss: ['Gonorrhoea']
+    },
+    {
+      tier: 2, name: 'Bacterial Vaginosis (Gardnerella)',
       abx: ["abx_89"], // Metronidazole
       notes: '500mg po bid x 7 days. Do NOT use 2g single dose for BV. Clue cells diagnostic.',
       miss: ['Candidiasis']

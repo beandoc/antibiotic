@@ -7,7 +7,7 @@ import { AlertTriangle, Plus, X, Search, ShieldAlert, CheckCircle, Info } from '
 
 /**
  * PATHOGEN PICKER MODAL
- * Refactored: Uses crit: 1 flag for MDR badge detection (Bug 5 fix)
+ * Refactored: Uses crit_type for surgical MDR badge detection. (Issue 3 fix)
  */
 function OrgPickerModal({ onAdd, onClose }) {
   const [search, setSearch] = useState('');
@@ -32,8 +32,8 @@ function OrgPickerModal({ onAdd, onClose }) {
         </div>
         <div className={modalStyles.dpsBody}>
            {filtered.map(o => {
-             // Logic Fix (Bug 5): Use explicit crit flag from organism database
-             const isMdr = o.crit === 1;
+             // Logic Fix (Issue 3): Only show MDR badge for definitive MDR pathogens
+             const isMdr = o.crit_type === 'defined_mdr';
              return (
                <button key={o.id} className={modalStyles.dpsDrugRow} onClick={() => { onAdd(o); onClose(); }}>
                  <div className={modalStyles.dpsNameRow}>
@@ -86,8 +86,7 @@ export function ScenarioAdvisor({
   }, [selectedAbxSet]);
 
   /**
-   * Logic Fix (Bug 1): Remove .slice(0, 10). 
-   * Always show all relevant pathogens for a source to prevent silent safety gaps.
+   * Logic Fix (Bug 1): Always show all relevant pathogens for a source.
    */
   const baselineOrgIds = useMemo(() => {
     const id = sourceId || 'all';
@@ -130,11 +129,11 @@ export function ScenarioAdvisor({
   }, [targetOrgs, selectedAbxSet, astOverrides]);
 
   const gaps = targetOrgs.filter(org => coverageMap[org.id] < 2);
+  // Issue 3: Use crit_type to determine if a gap is clinically 'Critical' for the confirmation block
   const criticalGaps = gaps.filter(g => g.crit === 1);
 
   /**
    * Logic Fix (Bug 3): Refined redundancy detection.
-   * Only triggers when MULTIPLE distinct drugs matching the profile are selected.
    */
   const redundancies = useMemo(() => {
     const profiles = {
@@ -164,7 +163,6 @@ export function ScenarioAdvisor({
 
   /**
    * Logic Fix (Bug 2): Use stable RESCUE_MAP for drug lookup.
-   * Eliminates brittle name-string matching and adds missing KPC/MBL support.
    */
   const RESCUE_MAP = {
     MRSA:  { id: 'abx_71', dose: '25mg/kg load IV' }, // Vancomycin
@@ -309,7 +307,6 @@ export function ScenarioAdvisor({
                      <div key={org.id} className={styles.advCovRow}>
                         <span className={styles.orgName}>{org.name}</span>
                         <span className={coverage >= 2 ? styles.badgeReliable : coverage === 1 ? styles.badgeWarning : styles.badgeNone}>
-                           {/* UX Change (Issue 6): Use VARIABLE instead of INTERMEDIATE to avoid microbiology confusion */}
                            {coverage >= 2 ? 'RELIABLE' : coverage === 1 ? 'VARIABLE ±' : 'INADEQUATE'}
                         </span>
                      </div>
@@ -322,10 +319,10 @@ export function ScenarioAdvisor({
                   <div className={styles.remedHdr}><ShieldAlert size={18} /> COVERAGE GAP IDENTIFIED</div>
                   <div className={styles.remedList}>
                      {gaps.map(g => {
-                        const isMdr = g.crit === 1;
+                        // Issue 3 Logic Fix: Only show MDR badge for definitive MDR pathogens
+                        const showMdrBadge = g.crit_type === 'defined_mdr';
                         let rescue = null;
                         
-                        // Rescue Logic: Match against predefined clinical keys
                         if (g.name.includes('MRSA')) rescue = RESCUE_MAP.MRSA;
                         else if (g.name.includes('VRE')) rescue = RESCUE_MAP.VRE;
                         else if (g.name.includes('ESBL')) rescue = RESCUE_MAP.ESBL;
@@ -335,10 +332,10 @@ export function ScenarioAdvisor({
                         const rescueDrug = rescue ? ALL_DRUGS.find(a => String(a.id) === String(rescue.id)) : null;
 
                         return (
-                           <div key={g.id} className={`${styles.remedItem} ${isMdr ? styles.critical : ''}`}>
+                           <div key={g.id} className={`${styles.remedItem} ${showMdrBadge ? styles.critical : ''}`}>
                               <div className={styles.remedLabel}>
                                  <strong>{g.name}</strong>
-                                 {isMdr && <span className={styles.critBadge}>MDR</span>}
+                                 {showMdrBadge && <span className={styles.critBadge}>MDR</span>}
                                  {rescueDrug && <span>Suggested: {rescueDrug.name} {rescue.dose}</span>}
                               </div>
                               {rescueDrug && !selectedAbxSet.has(rescueDrug.id) && (
@@ -373,7 +370,6 @@ export function ScenarioAdvisor({
       {showOrgPicker && (
         <OrgPickerModal 
           onAdd={o => {
-            // Logic Fix (Bug 4): Prevent duplicate culture organisms
             setCultureOrgs(prev => prev.find(x => x.id === o.id) ? prev : [...prev, o]);
           }} 
           onClose={() => setShowOrgPicker(false)} 

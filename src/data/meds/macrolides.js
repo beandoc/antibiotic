@@ -15,7 +15,7 @@ export const macrolides = [
       org_57: 1, org_58: 0, org_59: 3, org_60: 0, org_61: 2, org_62: 0, org_63: 1, org_64: 0,
       org_65: 2, org_66: 0, org_67: 0, org_68: 0, org_69: 0, org_70: 0, org_71: 0, org_72: 0,
       org_73: 2, org_74: 2, org_75: 2, org_76: 0, org_77: 0, org_78: 0, org_79: 1, org_80: 0,
-      org_81: 1, org_82: 1,
+      org_81: 1, org_82: 1, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -30,11 +30,11 @@ export const macrolides = [
       org_25: 0, org_26: 0, org_27: 0, org_28: 0, org_29: 0, org_30: 0, org_31: 0, org_32: 0,
       org_33: 0, org_34: 0, org_35: 0, org_36: 0, org_37: 0, org_38: 0, org_39: 0, org_40: 0,
       org_41: 0, org_42: 0, org_43: 0, org_44: 0, org_45: 3, org_46: 3, org_47: 0, org_48: 0,
-      org_49: 3, org_50: 2, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 3, org_56: 0,
+      org_49: 3, org_50: 2, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 3, org_56: 2,
       org_57: 1, org_58: 2, org_59: 3, org_60: 0, org_61: 2, org_62: 0, org_63: 1, org_64: 0,
       org_65: 2, org_66: 1, org_67: 0, org_68: 0, org_69: 0, org_70: 0, org_71: 0, org_72: 0,
       org_73: 3, org_74: 3, org_75: 3, org_76: 0, org_77: 0, org_78: 0, org_79: 1, org_80: 0,
-      org_81: 1, org_82: 1,
+      org_81: 1, org_82: 1, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -49,11 +49,11 @@ export const macrolides = [
       org_25: 0, org_26: 0, org_27: 0, org_28: 0, org_29: 0, org_30: 0, org_31: 0, org_32: 0,
       org_33: 0, org_34: 0, org_35: 0, org_36: 0, org_37: 0, org_38: 0, org_39: 0, org_40: 0,
       org_41: 0, org_42: 0, org_43: 0, org_44: 0, org_45: 3, org_46: 3, org_47: 0, org_48: 0,
-      org_49: 3, org_50: 2, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 3, org_56: 0,
+      org_49: 3, org_50: 2, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 3, org_56: 1,
       org_57: 1, org_58: 0, org_59: 3, org_60: 0, org_61: 2, org_62: 0, org_63: 1, org_64: 0,
       org_65: 2, org_66: 0, org_67: 0, org_68: 0, org_69: 0, org_70: 0, org_71: 0, org_72: 0,
       org_73: 2, org_74: 2, org_75: 3, org_76: 0, org_77: 0, org_78: 0, org_79: 1, org_80: 0,
-      org_81: 1, org_82: 1,
+      org_81: 1, org_82: 1, org_91: 3, org_92: 3, org_93: 3
     },
   },
   {
@@ -68,11 +68,11 @@ export const macrolides = [
       org_25: 0, org_26: 0, org_27: 0, org_28: 0, org_29: 0, org_30: 0, org_31: 0, org_32: 0,
       org_33: 0, org_34: 0, org_35: 0, org_36: 0, org_37: 0, org_38: 0, org_39: 0, org_40: 0,
       org_41: 0, org_42: 0, org_43: 0, org_44: 0, org_45: 3, org_46: 3, org_47: 0, org_48: 0,
-      org_49: 3, org_50: 2, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 3, org_56: 0,
+      org_49: 3, org_50: 2, org_51: 0, org_52: 0, org_53: 0, org_54: 0, org_55: 3, org_56: 2,
       org_57: 1, org_58: 0, org_59: 3, org_60: 0, org_61: 2, org_62: 0, org_63: 1, org_64: 0,
       org_65: 2, org_66: 0, org_67: 0, org_68: 0, org_69: 0, org_70: 0, org_71: 0, org_72: 0,
       org_73: 3, org_74: 3, org_75: 3, org_76: 0, org_77: 0, org_78: 0, org_79: 2, org_80: 0,
-      org_81: 2, org_82: 2,
+      org_81: 2, org_82: 2, org_91: 3, org_92: 3, org_93: 3
     },
   },
 ];

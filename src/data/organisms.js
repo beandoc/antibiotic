@@ -5,28 +5,28 @@
  */
 export const ORGANISMS = [
   // GRAM-POSITIVE COCCI
-  { id: "org_0", name: "E. faecalis (VS)", category: "gpc", sources: ["bact", "uti_comp", "endo", "iab"] },
-  { id: "org_1", name: "E. faecium (VS)", category: "gpc", sources: ["bact", "endo"] },
-  { id: "org_2", name: "E. faecalis (VRE)", category: "gpc", sources: ["bact", "endo"], crit: 1 },
-  { id: "org_3", name: "E. faecium (VRE)", category: "gpc", sources: ["bact", "endo"], crit: 1 },
+  { id: "org_0", name: "E. faecalis (VS)", category: "gpc", sources: ["bact", "uti_comp", "endo", "iab", "uti_simple", "pve"] },
+  { id: "org_1", name: "E. faecium (VS)", category: "gpc", sources: ["bact", "endo", "uti_comp"] },
+  { id: "org_2", name: "E. faecalis (VRE)", category: "gpc", sources: ["bact", "endo"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_3", name: "E. faecium (VRE)", category: "gpc", sources: ["bact", "endo"], crit: 1, crit_type: "defined_mdr" },
   { id: "org_4", name: "S. aureus MSSA", category: "gpc", sources: ["bact", "ssti", "osteo", "endo", "cap", "hap", "iab", "brain_abscess", "pve"] },
-  { id: "org_5", name: "S. aureus MRSA", category: "gpc", sources: ["bact", "ssti", "osteo", "endo", "hap", "cap", "brain_abscess", "pve"], crit: 1 },
+  { id: "org_5", name: "S. aureus MRSA", category: "gpc", sources: ["bact", "ssti", "osteo", "endo", "hap", "cap", "brain_abscess", "pve"], crit: 1, crit_type: "defined_mdr" },
   { id: "org_6", name: "Staph coag-neg (MS)", category: "gpc", sources: ["bact", "endo", "ssti"] },
-  { id: "org_7", name: "Staph coag-neg (MR)", category: "gpc", sources: ["bact", "endo", "pve"], crit: 1 },
-  { id: "org_8", name: "S. epidermidis (MR)", category: "gpc", sources: ["bact", "endo", "pve"], crit: 1 },
+  { id: "org_7", name: "Staph coag-neg (MR)", category: "gpc", sources: ["bact", "endo", "pve"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_8", name: "S. epidermidis (MR)", category: "gpc", sources: ["bact", "endo", "pve"], crit: 1, crit_type: "defined_mdr" },
   { id: "org_9", name: "S. epidermidis (MS)", category: "gpc", sources: ["bact", "endo", "ssti"] },
   { id: "org_10", name: "S. lugdunensis", category: "gpc", sources: ["bact", "endo", "ssti"] },
   { id: "org_11", name: "S. saprophyticus", category: "gpc", sources: ["uti_simple", "uti_comp"] },
   { id: "org_12", name: "Strep. anginosus gp", category: "gpc", sources: ["bact", "iab", "ssti", "endo", "brain_abscess"] },
-  { id: "org_13", name: "Strep. pyogenes (A)", category: "gpc", sources: ["ssti", "cap", "bact"] },
-  { id: "org_14", name: "Strep. agalactiae (B)", category: "gpc", sources: ["bact", "ssti", "endo", "mening"] },
+  { id: "org_13", name: "Strep. pyogenes (A)", category: "gpc", sources: ["ssti", "bact", "osteo"] },
+  { id: "org_14", name: "Strep. agalactiae (B)", category: "gpc", sources: ["bact", "ssti", "endo", "mening", "osteo"] },
   { id: "org_15", name: "Strep. gp C,F,G", category: "gpc", sources: ["bact", "ssti"] },
   { id: "org_16", name: "Strep. pneumoniae", category: "gpc", sources: ["cap", "mening", "bact", "endo"] },
-  { id: "org_17", name: "Viridans Strep.", category: "gpc", sources: ["bact", "endo"] },
+  { id: "org_17", name: "Viridans Strep.", category: "gpc", sources: ["bact", "endo", "pve"] },
 
   // GRAM-POSITIVE RODS
   { id: "org_21", name: "L. monocytogenes", category: "gpb", sources: ["mening", "bact", "brain_abscess"] },
-  { id: "org_22", name: "Nocardia sp.", category: "gpb", sources: ["cap", "ssti", "bact", "brain_abscess"] },
+  { id: "org_22", name: "Nocardia sp.", category: "gpb", sources: ["ssti", "bact", "brain_abscess"] },
   { id: "org_84", name: "C. urealyticum", category: "gpb", sources: ["uti_comp"] },
 
   // GRAM-NEGATIVE ENTEROBACTERALES (GNE)
@@ -34,14 +34,14 @@ export const ORGANISMS = [
   { id: "org_24", name: "C. freundii", category: "gne", sources: ["bact", "uti_comp", "hap"] },
   { id: "org_25", name: "C. koseri", category: "gne", sources: ["bact", "uti_comp", "mening"] },
   { id: "org_26", name: "E. cloacae", category: "gne", sources: ["bact", "uti_comp", "hap"] },
-  { id: "org_27", name: "E. coli (S)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab", "ssti"] },
-  { id: "org_28", name: "E. coli (ESBL)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab"], crit: 1 },
-  { id: "org_29", name: "E. coli (KPC)", category: "gne", sources: ["bact", "uti_comp"], crit: 1 },
-  { id: "org_30", name: "E. coli (MBL)", category: "gne", sources: ["bact", "uti_comp"], crit: 1 },
-  { id: "org_31", name: "Klebsiella pneu (S)", category: "gne", sources: ["bact", "uti_simple", "uti_comp", "hap", "iab"] },
-  { id: "org_33", name: "Klebsiella (ESBL)", category: "gne", sources: ["bact", "uti_comp", "hap", "uti_simple"], crit: 1 },
-  { id: "org_34", name: "Klebsiella (KPC)", category: "gne", sources: ["bact", "hap", "uti_comp"], crit: 1 },
-  { id: "org_35", name: "Klebsiella (MBL)", category: "gne", sources: ["bact", "uti_comp"], crit: 1 },
+  { id: "org_27", name: "E. coli (S)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab", "ssti", "osteo", "mening", "brain_abscess"] },
+  { id: "org_28", name: "E. coli (ESBL)", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "iab", "hap"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_29", name: "E. coli (KPC)", category: "gne", sources: ["bact", "uti_comp", "hap"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_30", name: "E. coli (MBL)", category: "gne", sources: ["bact", "uti_comp", "hap"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_31", name: "Klebsiella pneu (S)", category: "gne", sources: ["bact", "uti_simple", "uti_comp", "hap", "iab", "osteo", "brain_abscess"] },
+  { id: "org_33", name: "Klebsiella (ESBL)", category: "gne", sources: ["bact", "uti_comp", "hap", "uti_simple"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_34", name: "Klebsiella (KPC)", category: "gne", sources: ["bact", "hap", "uti_comp"], crit: 1, crit_type: "defined_mdr" },
+  { id: "org_35", name: "Klebsiella (MBL)", category: "gne", sources: ["bact", "uti_comp", "hap"], crit: 1, crit_type: "defined_mdr" },
   { id: "org_38", name: "P. mirabilis", category: "gne", sources: ["uti_simple", "uti_comp", "bact", "ssti"] },
   { id: "org_42", name: "Serratia marcescens", category: "gne", sources: ["bact", "hap", "uti_comp"] },
   { id: "org_55", name: "Klebsiella aerogenes", category: "gne", sources: ["bact", "hap", "uti_comp"] },
@@ -50,6 +50,7 @@ export const ORGANISMS = [
   // GRAM-NEGATIVE NON-ENTEROBACTERALES (GNN)
   { id: "org_56", name: "H. influenzae", category: "gnn", sources: ["cap", "mening", "ssti", "bact"] },
   { id: "org_60", name: "N. gonorrhoeae", category: "gnn", sources: ["sti", "bact"] },
+  { id: "org_61", name: "M. catarrhalis", category: "gnn", sources: ["cap"] },
   { id: "org_62", name: "N. meningitidis", category: "gnn", sources: ["mening", "bact"] },
   { id: "org_73", name: "Bordetella pertussis", category: "gnn", sources: ["resp_pertussis"] },
   { id: "org_75", name: "Campylobacter sp.", category: "gnn", sources: ["gi_diarrhea"] },
@@ -57,11 +58,11 @@ export const ORGANISMS = [
   { id: "org_93", name: "Legionella sp.", category: "gnn", sources: ["cap", "hap"] },
 
   // NON-FERMENTERS (NF)
-  { id: "org_70", name: "Acinetobacter sp.", category: "nf", sources: ["bact", "hap", "uti_comp", "ssti"], crit: 1 },
-  { id: "org_71", name: "P. aeruginosa", category: "nf", sources: ["hap", "uti_comp", "bact", "ssti", "cap"], crit: 1 },
-  { id: "org_72", name: "S. maltophilia", category: "nf", sources: ["hap", "bact"], crit: 1 },
-  { id: "org_74", name: "Burkholderia cepacia", category: "nf", sources: ["hap", "bact"] },
-  { id: "org_88", name: "Elizabethkingia sp.", category: "nf", sources: ["mening", "hap", "bact"] },
+  { id: "org_70", name: "Acinetobacter sp.", category: "nf", sources: ["bact", "hap", "uti_comp", "ssti"], crit: 1, crit_type: "risk" },
+  { id: "org_71", name: "P. aeruginosa", category: "nf", sources: ["hap", "uti_comp", "bact", "ssti", "osteo"], crit: 1, crit_type: "risk" },
+  { id: "org_72", name: "S. maltophilia", category: "nf", sources: ["hap", "bact"], crit: 1, crit_type: "risk" },
+  { id: "org_74", name: "Burkholderia cepacia", category: "nf", sources: ["hap", "bact"], crit: 1, crit_type: "risk" },
+  { id: "org_88", name: "Elizabethkingia sp.", category: "nf", sources: ["mening", "hap", "bact"], crit: 1, crit_type: "risk" },
 
   // ANAEROBES (AN)
   { id: "org_76", name: "B. fragilis", category: "an", sources: ["iab", "bact", "ssti", "brain_abscess"] },
@@ -72,7 +73,13 @@ export const ORGANISMS = [
   { id: "org_89", name: "Gardnerella vaginalis", category: "an", sources: ["sti"] },
 
   // ATYPICALS / INTRACELLULAR (ATYP)
-  { id: "org_85", name: "Coxiella burnetii", category: "atyp", sources: ["zoonotic_qfever"] },
+  { id: "org_85", name: "Coxiella burnetii", category: "atyp", sources: ["zoonotic_qfever", "endo"] },
   { id: "org_91", name: "M. pneumoniae", category: "atyp", sources: ["cap"] },
   { id: "org_92", name: "Chlamydophila sp.", category: "atyp", sources: ["cap"] },
+  { id: "org_94", name: "Salmonella typhi", category: "gne", sources: ["gi_diarrhea", "bact"] },
+  { id: "org_95", name: "Salmonella non-typhi", category: "gne", sources: ["gi_diarrhea", "bact"] },
+  { id: "org_96", name: "Shigella sp.", category: "gne", sources: ["gi_diarrhea"] },
+  { id: "org_97", name: "Pasteurella multocida", category: "gnn", sources: ["ssti", "bact"] },
+  { id: "org_98", name: "Chlamydia trachomatis", category: "atyp", sources: ["sti"] },
+  { id: "org_99", name: "Treponema pallidum", category: "atyp", sources: ["sti"] },
 ];
