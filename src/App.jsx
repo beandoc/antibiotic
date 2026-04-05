@@ -11,6 +11,7 @@ import { SafetyScreen } from './screens/SafetyScreen';
 import { GapAnalysisSheet } from './components/GapAnalysisSheet';
 import { DrugPickerModal } from './components/DrugPickerModal';
 import { ScenarioAdvisor } from './components/ScenarioAdvisor';
+import { SummaryScreen } from './components/SummaryScreen';
 
 function App() {
   const [activeTab, setActiveTab] = useState('situation');
@@ -174,24 +175,31 @@ function App() {
             activeSource={cultureSource} setSource={setCultureSource}
             labRecords={labRecords} onAddRecord={(s, o) => setLabRecords(prev => ({...prev, [s]: o}))}
             onRemoveRecord={(s) => {const n = {...labRecords}; delete n[s]; setLabRecords(n);}}
-            currentRegimen={manualRegimen || availableRegimens[activeRegimenIdx]} 
+            currentRegimen={manualAbx.size > 0 ? manualRegimen : availableRegimens[activeRegimenIdx]} 
             getCoverage={getCoverage} 
             onSkip={() => setActiveTab('safety')}
-            onFinish={() => {
-              alert('Treatment Plan Finalized & Exported to EHR Simulation');
-              resetAll();
-            }}
+            onFinish={() => setActiveTab('summary')}
           />
         )}
         {activeTab === 'safety' && (
           <SafetyScreen 
             eGFR={eGFR} setEGFR={setEGFR} 
             childPugh={childPugh} setChildPugh={setChildPugh} 
-            currentRegimen={manualRegimen || availableRegimens[activeRegimenIdx]} 
+            currentRegimen={manualAbx.size > 0 ? manualRegimen : availableRegimens[activeRegimenIdx]} 
             onNext={(opts) => {
               if (opts?.back) setActiveTab('advisor');
               else setActiveTab('culture');
             }}
+          />
+        )}
+        {activeTab === 'summary' && (
+          <SummaryScreen 
+            patientId={patientId}
+            sourceId={selectedSourceId}
+            selectedAbxSet={manualAbx.size > 0 ? manualAbx : new Set(availableRegimens[activeRegimenIdx]?.abx || [])}
+            riskModifiers={riskModifiers}
+            eGFR={eGFR}
+            onReset={resetAll}
           />
         )}
         {activeTab === 'advisor' && (

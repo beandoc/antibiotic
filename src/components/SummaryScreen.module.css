@@ -1,0 +1,130 @@
+.summaryScreen {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 60px;
+}
+
+.blueprintCard {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #334155;
+  border-radius: 24px;
+  padding: 32px;
+  margin-bottom: 32px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.blueprintCard::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 150px; height: 150px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+}
+
+.bpHeader {
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(56, 189, 248, 0.2);
+  padding-bottom: 20px;
+}
+
+.bpHeader h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.bpHeader span {
+  font-size: 11px;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.statItem {
+  background: rgba(255,255,255,0.03);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.statLbl { font-size: 10px; color: #94a3b8; margin-bottom: 4px; font-weight: 700; text-transform: uppercase; }
+.statVal { font-size: 18px; color: #fff; font-weight: 800; }
+
+.section {
+  margin-bottom: 32px;
+}
+
+.section h3 {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.prosList, .consList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pItem {
+  display: flex;
+  gap: 12px;
+  background: rgba(52, 211, 153, 0.05);
+  border-left: 3px solid #34d399;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: #f8fafc;
+}
+
+.cItem {
+  display: flex;
+  gap: 12px;
+  background: rgba(239, 68, 68, 0.05);
+  border-left: 3px solid #ef4444;
+  padding: 12px 16px;
+  border-radius: 0 8px 8px 0;
+  font-size: 13px;
+  color: #f8fafc;
+}
+
+.clinicalNoteWrap {
+  background: #000;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 10px;
+}
+
+.clinicalNoteText {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #fbbf24;
+  white-space: pre-wrap;
+}
+
+.finishActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+  .statsGrid { grid-template-columns: repeat(4, 1fr); }
+  .blueprintCard { padding: 48px; }
+}
