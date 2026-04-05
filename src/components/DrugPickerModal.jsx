@@ -1,14 +1,15 @@
-import React, { useState, useMemo } from 'react';
-import { ANTIBIOTICS } from '../data';
+import { ANTIBIOTICS, ANTIFUNGALS } from '../data';
 import { X, Search, Check } from 'lucide-react';
 import styles from './DrugPickerModal.module.css';
 
 export function DrugPickerModal({ selectedAbx, onToggle, onConfirm, onClose }) {
   const [search, setSearch] = useState('');
 
+  const ALL_DRUGS = useMemo(() => [...ANTIBIOTICS, ...ANTIFUNGALS], []);
+
   const grouped = useMemo(() => {
-    const filtered = ANTIBIOTICS.filter(a =>
-      !search || a.name.toLowerCase().includes(search.toLowerCase())
+    const filtered = ALL_DRUGS.filter(a =>
+      !search || a.name.toLowerCase().includes(search.toLowerCase()) || a.class.toLowerCase().includes(search.toLowerCase())
     );
     const map = {};
     filtered.forEach(a => {
@@ -16,7 +17,7 @@ export function DrugPickerModal({ selectedAbx, onToggle, onConfirm, onClose }) {
       map[a.class].push(a);
     });
     return map;
-  }, [search]);
+  }, [search, ALL_DRUGS]);
 
   const selectedCount = selectedAbx.size;
 

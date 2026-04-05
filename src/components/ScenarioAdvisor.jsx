@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from 'react';
-import { ANTIBIOTICS, ORGANISMS, SOURCES } from '../data';
+import { ANTIBIOTICS, ANTIFUNGALS, ORGANISMS, AF_ORGS, SOURCES } from '../data';
 import { getCoverage } from '../utils/coverageEngine';
 import styles from './ScenarioAdvisor.module.css';
 import modalStyles from './DrugPickerModal.module.css';
@@ -7,8 +6,10 @@ import { AlertTriangle, Plus, X, Search, ShieldAlert } from 'lucide-react';
 
 function OrgPickerModal({ onAdd, onClose }) {
   const [search, setSearch] = useState('');
+  const ALL_ORGS = useMemo(() => [...ORGANISMS, ...AF_ORGS], []);
+
   const filtered = search.length > 0 
-    ? ORGANISMS.filter(o => o.name.toLowerCase().includes(search.toLowerCase()))
+    ? ALL_ORGS.filter(o => o.name.toLowerCase().includes(search.toLowerCase()))
     : [];
 
   return (
@@ -54,19 +55,20 @@ export function ScenarioAdvisor({ sourceId, riskModifiers, onToggleModifier, sel
 
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
   
+  const ALL_ORGS = useMemo(() => [...ORGANISMS, ...AF_ORGS], []);
+
   const baselineOrgIds = useMemo(() => {
     const id = sourceId;
     if (!id) {
-       // Undifferentiated scenario baseline
-       return ORGANISMS.filter(o => (o.sources || []).includes('bact')).slice(0, 3).map(o => o.id);
+       return ALL_ORGS.filter(o => (o.sources || []).includes('bact')).slice(0, 3).map(o => o.id);
     }
-    return ORGANISMS.filter(o => (o.sources || []).includes(id)).slice(0, 3).map(o => o.id);
-  }, [sourceId]);
+    return ALL_ORGS.filter(o => (o.sources || []).includes(id)).slice(0, 3).map(o => o.id);
+  }, [sourceId, ALL_ORGS]);
 
   const targetOrgs = useMemo(() => {
     const combined = new Map();
     baselineOrgIds.forEach(id => {
-       const org = ORGANISMS.find(o => o.id === id);
+       const org = ALL_ORGS.find(o => o.id === id);
        if (org) combined.set(id, org);
     });
     cultureOrgs.forEach(org => {
@@ -75,7 +77,10 @@ export function ScenarioAdvisor({ sourceId, riskModifiers, onToggleModifier, sel
     return Array.from(combined.values());
   }, [baselineOrgIds, cultureOrgs]);
 
-  const selectedAbxList = Array.from(selectedAbxSet).map(id => ANTIBIOTICS.find(a => String(a.id) === String(id))).filter(Boolean);
+  const selectedAbxList = Array.from(selectedAbxSet).map(id => {
+    const ALL_DRUGS = [...ANTIBIOTICS, ...ANTIFUNGALS];
+    return ALL_DRUGS.find(a => String(a.id) === String(id));
+  }).filter(Boolean);
 
   // Redundancy Check logic
   const redundancies = useMemo(() => {

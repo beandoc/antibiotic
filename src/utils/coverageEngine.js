@@ -1,11 +1,13 @@
-import { ANTIBIOTICS } from '../data';
+import { ANTIBIOTICS, ANTIFUNGALS } from '../data';
 
 export const getCoverage = (targetOrgId, abxIds) => {
   if (!abxIds || abxIds.length === 0) return 0;
+  
+  const ALL_DRUGS = [...ANTIBIOTICS, ...ANTIFUNGALS];
+
   return Math.max(...abxIds.map(id => {
-    const cleanId = String(id).replace('abx_', '');
-    const abx = ANTIBIOTICS.find(a => String(a.id) === String(id) || String(a.id) === `abx_${cleanId}`);
-    return (abx && abx.coverage) ? abx.coverage[targetOrgId] || 0 : 0;
+    const drug = ALL_DRUGS.find(d => String(d.id) === String(id));
+    return (drug && drug.coverage) ? drug.coverage[targetOrgId] || 0 : 0;
   }));
 };
 

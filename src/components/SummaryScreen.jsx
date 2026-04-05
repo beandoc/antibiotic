@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ShieldCheck, Target, AlertTriangle, FileText, CheckCircle, RefreshCcw } from 'lucide-react';
-import { ANTIBIOTICS, SOURCES } from '../data';
+import { ANTIBIOTICS, ANTIFUNGALS, SOURCES } from '../data';
 import styles from './SummaryScreen.module.css';
 
 export function SummaryScreen({ 
@@ -14,7 +14,10 @@ export function SummaryScreen({
 }) {
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
   const abxIds = Array.from(selectedAbxSet || []);
-  const drugs = abxIds.map(id => ANTIBIOTICS.find(a => String(a.id) === String(id))).filter(Boolean);
+  const drugs = useMemo(() => {
+    const ALL_DRUGS = [...ANTIBIOTICS, ...ANTIFUNGALS];
+    return abxIds.map(id => ALL_DRUGS.find(a => String(a.id) === String(id))).filter(Boolean);
+  }, [abxIds]);
   
   const strengths = useMemo(() => {
     const list = [];
