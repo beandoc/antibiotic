@@ -1,24 +1,31 @@
 import React from 'react';
+import { X, ShieldAlert } from 'lucide-react';
+import styles from './GapAnalysisSheet.module.css';
 
 export function GapAnalysisSheet({ org, onAdd, onClose }) {
   if (!org) return null;
   return (
-    <div className="bottom-sheet-overlay" onClick={onClose}>
-       <div className="bottom-sheet-content" onClick={e => e.stopPropagation()}>
-          <div className="sheet-hdr">
+    <div className={styles.bottomSheetOverlay} onClick={onClose}>
+       <div className={styles.bottomSheetContent} onClick={e => e.stopPropagation()}>
+          <div className={styles.sheetHdr}>
              <h3>Gap analysis: {org?.name || 'Unknown'}</h3>
-             <button className="sheet-close" onClick={onClose}>✕</button>
+             <button className={styles.sheetClose} onClick={onClose}><X size={20} /></button>
           </div>
-          <div className="org-detail-card">
-             <div className="o-meta">MDR ORGANISM</div>
-             <div className="l-name">{org.name}</div>
-             <div className="o-status-badge">NOT COVERED</div>
+
+          <div className={styles.orgDetailCard}>
+             <div className={styles.oMeta}>TARGET ORGANISM</div>
+             <div className={styles.lName}>{org.name}</div>
+             <div className={styles.oStatusBadge}>⚠️ COVERAGE INADEQUATE</div>
           </div>
-          <div className="clinical-context-note">
+
+          <div className={styles.clinicalContextNote}>
              <h4>CLINICAL RATIONALE</h4>
-             <p>VRE coverage is essential in ICU bacteraemia with prior glycopeptide exposure. Linezolid is the preferred rescue agent.</p>
+             <p>This organism is considered highly pathogenic. Our analysis suggests your current regimen may leave a coverage gap. Expert consultation or empiric escalation with a targeted rescue agent (e.g., Linezolid or Daptomycin) is recommended based on local guidelines.</p>
           </div>
-          <button className="add-rescue-btn" onClick={() => onAdd('linezolid')}>+ Add Linezolid to regimen</button>
+
+          <button className={styles.addRescueBtn} onClick={() => onAdd('linezolid')}>
+            + Add Linezolid to regimen
+          </button>
        </div>
     </div>
   );

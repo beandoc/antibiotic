@@ -1,5 +1,6 @@
 import React from 'react';
 import { ANTIBIOTICS } from '../data';
+import styles from './RegimenScreen.module.css';
 
 export function RegimenScreen({ source, recommendations, riskModifiers, activeSlide, setSlide, getCov, onOpenGap, onSelect, onManual }) {
   const mods = Array.from(riskModifiers).join(' · ');
@@ -11,70 +12,69 @@ export function RegimenScreen({ source, recommendations, riskModifiers, activeSl
   };
 
   return (
-    <div className="screen fade-in">
+    <div className={`screen fade-in ${styles.regimenScreen}`}>
        <header className="screen-header mode-hdr">
         <div>
            <h1>{source.ico} {source.l?.toUpperCase()}</h1>
         </div>
       </header>
       
-      {mods && <div className="active-mods-banner">⚠️ High Risk: {mods}</div>}
+      {mods && <div className={styles.activeModsBanner}>⚠️ HIGH RISK: {mods}</div>}
 
-      <div className="swipe-instruction">Swipe to compare options →</div>
+      <div className={styles.swipeInstruction}>Swipe to compare protocols →</div>
 
-      <div className="regimen-swipe-deck" onScroll={handleScroll}>
-         {recommendations.map((r, i) => {
-           // We have already passed activeSlide here
-           const { total, gaps } = getCov(r.abx);
-           const badge = i === 0 ? '⭐ FIRST-LINE' : i === 1 ? '⚡ ALTERNATIVE' : '🔥 ESCALATION';
-           
-           return (
-             <div key={i} className="regimen-slide">
-                <div className={`smart-card tier-${r.tier || (i+1)}`}>
-                   <div className="c-hdr">
-                      <div className="t-badge">{badge}</div>
-                      <div className="p-stat">{total}% COVERED</div>
-                   </div>
-                   <div className="regimen-title">{r.name}</div>
-                   <div className="regimen-abx-chips">
-                      {r.abx.map(id => {
-                        // ALWAYS search by string ID to prevent number/string mismatch breaking the UI
-                        const cleanId = String(id).replace('abx_', '');
-                        const name = ANTIBIOTICS.find(a => String(a.id) === String(id) || String(a.id) === `abx_${cleanId}`)?.name || id;
-                        return <div key={id} className="abx-chip">{name}</div>;
-                      })}
-                   </div>
-                   
-                   <div className="confidence-meter">
-                      <div className="meter-fill" style={{ width: `${total}%` }}></div>
-                   </div>
+      <div className={styles.regimenSwipeDeck} onScroll={handleScroll}>
+          {recommendations.map((r, i) => {
+            const { total, gaps } = getCov(r.abx);
+            const tierCls = r.tier === 1 ? styles.tier1 : r.tier === 2 ? styles.tier2 : styles.tier3;
+            const badge = i === 0 ? '⭐ FIRST-LINE' : i === 1 ? '⚡ ALTERNATIVE' : '🔥 ESCALATION';
+            
+            return (
+              <div key={i} className={styles.regimenSlide}>
+                 <div className={`${styles.smartCard} ${tierCls}`}>
+                    <div className={styles.cHdr}>
+                       <div className={styles.tBadge}>{badge}</div>
+                       <div className={styles.pStat}>{total}% COVERED</div>
+                    </div>
+                    <div className={styles.regimenTitle}>{r.name}</div>
+                    <div className={styles.regimenAbxChips}>
+                       {r.abx.map(id => {
+                         const cleanId = String(id).replace('abx_', '');
+                         const name = ANTIBIOTICS.find(a => String(a.id) === String(id) || String(a.id) === `abx_${cleanId}`)?.name || id;
+                         return <div key={id} className={styles.abxChip}>{name}</div>;
+                       })}
+                    </div>
+                    
+                    <div className={styles.confidenceMeter}>
+                       <div className={styles.meterFill} style={{ width: `${total}%` }}></div>
+                    </div>
 
-                   <div className="gap-zone">
-                      <div className="gap-lbl">{i === 2 ? 'Specialist input required — gaps:' : 'Coverage gaps:'}</div>
-                      <div className="gap-pills">
-                         {gaps.slice(0, 4).map(g => (
-                           <div key={g.id} className="mini-gap-pill clickable" onClick={() => onOpenGap(g)}>
-                             <span className="g-dot"></span> {g.name}
-                           </div>
-                         ))}
-                         {gaps.length > 4 && <div className="mini-gap-pill overflow">+{gaps.length - 4} more</div>}
-                      </div>
-                   </div>
-                </div>
-             </div>
-           );
-         })}
+                    <div className={styles.gapZone}>
+                       <div className={styles.gapLbl}>Potential Gaps:</div>
+                       <div className={styles.gapPills}>
+                          {gaps.slice(0, 4).map(g => (
+                            <div key={g.id} className={`${styles.miniGapPill} ${styles.clickable}`} onClick={() => onOpenGap(g)}>
+                              <span className={styles.gDot}></span> {g.name}
+                            </div>
+                          ))}
+                          {gaps.length > 4 && <div className={styles.miniGapPill}>+{gaps.length - 4} more</div>}
+                       </div>
+                    </div>
+                 </div>
+              </div>
+            );
+          })}
       </div>
 
-      <div className="pagination-dots">
-         {[0, 1, 2].map(i => (
-           <div key={i} className={`p-dot ${activeSlide === i ? 'active' : ''}`}></div>
+      <div className={styles.paginationDots}>
+         {recommendations.map((_, i) => (
+           <div key={i} className={`${styles.pDot} ${activeSlide === i ? styles.active : ''}`}></div>
          ))}
       </div>
 
       <div className="regimen-footer-actions">
-         <button className="f-btn ghost" onClick={onManual}>+ Add drug manually</button>
-         <button className="f-btn blue" onClick={onSelect}>▶ Apply current regimen</button>
+         <button className="f-btn ghost" style={{ flex: 1 }} onClick={onManual}>Manual Entry</button>
+         <button className="f-btn blue" style={{ flex: 2 }} onClick={onSelect}>Apply Protocol ▸</button>
       </div>
     </div>
   );

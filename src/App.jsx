@@ -197,6 +197,12 @@ function App() {
         {activeTab === 'advisor' && (
            <ScenarioAdvisor 
               sourceId={selectedSourceId}
+              riskModifiers={riskModifiers}
+              onToggleModifier={(m) => {
+                const next = new Set(riskModifiers);
+                if (next.has(m)) next.delete(m); else next.add(m);
+                setRiskModifiers(next);
+              }}
               selectedAbxSet={manualAbx}
               onToggleAbx={toggleManualAbx}
               eGFR={eGFR}

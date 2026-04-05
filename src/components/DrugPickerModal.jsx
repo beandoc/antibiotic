@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { ANTIBIOTICS } from '../data';
+import { X, Search, Check } from 'lucide-react';
+import styles from './DrugPickerModal.module.css';
 
 export function DrugPickerModal({ selectedAbx, onToggle, onConfirm, onClose }) {
   const [search, setSearch] = useState('');
 
-  // Group antibiotics by class
   const grouped = useMemo(() => {
     const filtered = ANTIBIOTICS.filter(a =>
       !search || a.name.toLowerCase().includes(search.toLowerCase())
@@ -20,45 +21,44 @@ export function DrugPickerModal({ selectedAbx, onToggle, onConfirm, onClose }) {
   const selectedCount = selectedAbx.size;
 
   return (
-    <div className="drug-picker-overlay" onClick={onClose}>
-      <div className="drug-picker-sheet" onClick={e => e.stopPropagation()}>
+    <div className={styles.drugPickerOverlay} onClick={onClose}>
+      <div className={styles.drugPickerSheet} onClick={e => e.stopPropagation()}>
 
-        {/* Header */}
-        <div className="dps-header">
-          <div className="dps-title-row">
-            <span className="dps-title">ANTIBIOTICS</span>
-            <span className="dps-count">· {ANTIBIOTICS.length}</span>
-            <div className="dps-bulk-btns">
-              <button className="dps-bulk-btn" onClick={() => ANTIBIOTICS.forEach(a => { if (!selectedAbx.has(a.id)) onToggle(a.id); })}>All</button>
-              <button className="dps-bulk-btn" onClick={() => ANTIBIOTICS.forEach(a => { if (selectedAbx.has(a.id)) onToggle(a.id); })}>None</button>
+        <div className={styles.dpsHeader}>
+          <div className={styles.dpsTitleRow}>
+            <span className={styles.dpsTitle}>SELECT ANTIBIOTICS</span>
+            <span className={styles.dpsCount}>· {ANTIBIOTICS.length} available</span>
+            <div className={styles.dpsBulkBtns}>
+              <button className={styles.dpsBulkBtn} onClick={() => ANTIBIOTICS.forEach(a => { if (!selectedAbx.has(a.id)) onToggle(a.id); })}>All</button>
+              <button className={styles.dpsBulkBtn} onClick={() => ANTIBIOTICS.forEach(a => { if (selectedAbx.has(a.id)) onToggle(a.id); })}>None</button>
             </div>
           </div>
 
-          {/* Search */}
-          <div className="dps-search-wrap">
-            <span className="dps-search-ico">🔍</span>
+          <div className={styles.dpsSearchWrap}>
+            <Search size={18} className={styles.dpsSearchIco} />
             <input
-              className="dps-search-input"
-              placeholder="Search antibiotic..."
+              className={styles.dpsSearchInput}
+              placeholder="Search by name or class..."
               value={search}
               onChange={e => setSearch(e.target.value)}
               autoFocus
             />
             {search && (
-              <button className="dps-clear-btn" onClick={() => setSearch('')}>✕</button>
+              <button className={styles.dpsClearBtn} onClick={() => setSearch('')}>
+                <X size={16} />
+              </button>
             )}
           </div>
         </div>
 
-        {/* Scrollable list */}
-        <div className="dps-body">
+        <div className={styles.dpsBody}>
           {Object.keys(grouped).length === 0 ? (
-            <div className="dps-empty">No antibiotics match "{search}"</div>
+            <div className={styles.dpsEmpty}>No antibiotics found for "{search}"</div>
           ) : (
             Object.entries(grouped).map(([cls, drugs]) => (
-              <div key={cls} className="dps-class-group">
-                <div className="dps-class-label">
-                  <span className="dps-class-arrow">▸</span>
+              <div key={cls} className={styles.dpsClassGroup}>
+                <div className={styles.dpsClassLabel}>
+                  <span className={styles.dpsClassArrow}>▸</span>
                   {cls.toUpperCase()}
                 </div>
                 {drugs.map(drug => {
@@ -66,14 +66,14 @@ export function DrugPickerModal({ selectedAbx, onToggle, onConfirm, onClose }) {
                   return (
                     <button
                       key={drug.id}
-                      className={`dps-drug-row ${checked ? 'dps-drug-row--checked' : ''}`}
+                      className={`${styles.dpsDrugRow} ${checked ? styles.dpsDrugRowChecked : ''}`}
                       onClick={() => onToggle(drug.id)}
                     >
-                      <span className={`dps-checkbox ${checked ? 'dps-checkbox--on' : ''}`}>
-                        {checked && <span className="dps-check-mark">✓</span>}
+                      <span className={`${styles.dpsCheckbox} ${checked ? styles.dpsCheckboxOn : ''}`}>
+                        {checked && <Check size={14} className={styles.dpsCheckMark} />}
                       </span>
-                      <span className="dps-drug-name">{drug.name}</span>
-                      <span className="dps-route-badge">{drug.route}</span>
+                      <span className={styles.dpsDrugName}>{drug.name}</span>
+                      <span className={styles.dpsRouteBadge}>{drug.route}</span>
                     </button>
                   );
                 })}
@@ -82,17 +82,16 @@ export function DrugPickerModal({ selectedAbx, onToggle, onConfirm, onClose }) {
           )}
         </div>
 
-        {/* Footer */}
-        <div className="dps-footer">
-          <button className="dps-cancel-btn" onClick={onClose}>Cancel</button>
+        <div className={styles.dpsFooter}>
+          <button className={styles.dpsCancelBtn} onClick={onClose}>Cancel</button>
           <button
-            className="dps-confirm-btn"
+            className={styles.dpsConfirmBtn}
             onClick={onConfirm}
             disabled={selectedCount === 0}
           >
             {selectedCount === 0
               ? 'Select drugs to apply'
-              : `Apply ${selectedCount} drug${selectedCount > 1 ? 's' : ''}`}
+              : `Confirm ${selectedCount} Selection${selectedCount > 1 ? 's' : ''}`}
           </button>
         </div>
       </div>

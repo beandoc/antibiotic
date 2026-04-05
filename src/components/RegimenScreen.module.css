@@ -1,0 +1,193 @@
+.regimenScreen {
+  padding-bottom: 40px;
+}
+
+.activeModsBanner {
+  background: rgba(255, 170, 0, 0.08);
+  border: 1px solid rgba(255, 170, 0, 0.3);
+  color: var(--warning);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  letter-spacing: 0.5px;
+}
+
+.swipeInstruction {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.regimenSwipeDeck {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  gap: 16px;
+  padding: 0 4px;
+  margin: 0 -16px;
+  scrollbar-width: none;
+}
+
+.regimenSwipeDeck::-webkit-scrollbar { display: none; }
+
+.regimenSlide {
+  flex: 0 0 100%;
+  padding: 0 16px;
+  scroll-snap-align: center;
+}
+
+.smartCard {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.smartCard.tier1 { border-top: 4px solid var(--success); }
+.smartCard.tier2 { border-top: 4px solid var(--warning); }
+.smartCard.tier3 { border-top: 4px solid var(--danger); }
+
+.cHdr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tBadge {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.pStat {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.regimenTitle {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.regimenAbxChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.abxChip {
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  padding: 6px 12px;
+  border-radius: 200px;
+  color: var(--text);
+}
+
+.confidenceMeter {
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.meterFill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gapZone {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.gapLbl {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.gapPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.miniGapPill {
+  font-size: 10px;
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--danger-dim);
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.miniGapPill.clickable { cursor: pointer; }
+.miniGapPill.clickable:hover { border-color: var(--danger); }
+
+.gDot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+
+.paginationDots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 32px 0;
+}
+
+.pDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: all 0.3s;
+}
+
+.pDot.active {
+  background: var(--accent);
+  transform: scale(1.4);
+}
+
+.regimenFooterActions {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+@media (min-width: 768px) {
+  .regimenSwipeDeck {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    overflow: visible;
+    margin: 0;
+  }
+  .regimenSlide {
+    padding: 0;
+  }
+}

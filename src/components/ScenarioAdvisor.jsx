@@ -2,8 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { ANTIBIOTICS, ORGANISMS, SOURCES } from '../data';
 import { getCoverage } from '../utils/coverageEngine';
 import styles from './ScenarioAdvisor.module.css';
+import modalStyles from './DrugPickerModal.module.css';
 
-// Custom Organism Picker is low-risk so we keep it local for speed
 function OrgPickerModal({ onAdd, onClose }) {
   const [search, setSearch] = useState('');
   const filtered = search.length > 0 
@@ -11,43 +11,42 @@ function OrgPickerModal({ onAdd, onClose }) {
     : [];
 
   return (
-    <div className="drug-picker-overlay" onClick={onClose}>
-      <div className="drug-picker-sheet" onClick={e => e.stopPropagation()}>
-        <div className="dps-header">
-           <div className="dps-title-row"><span className="dps-title">SELECT ORGANISM</span></div>
-           <div className="dps-search-wrap">
-              <span className="dps-search-ico">🔍</span>
+    <div className={modalStyles.drugPickerOverlay} onClick={onClose}>
+      <div className={modalStyles.drugPickerSheet} onClick={e => e.stopPropagation()}>
+        <div className={modalStyles.dpsHeader}>
+           <div className={modalStyles.dpsTitleRow}><span className={modalStyles.dpsTitle}>SELECT ORGANISM</span></div>
+           <div className={modalStyles.dpsSearchWrap}>
+              <span className={modalStyles.dpsSearchIco}>🔍</span>
               <input 
-                className="dps-search-input" autoFocus placeholder="Search pathogen..."
+                className={modalStyles.dpsSearchInput} autoFocus placeholder="Search pathogen..."
                 value={search} onChange={e => setSearch(e.target.value)}
               />
            </div>
         </div>
-        <div className="dps-body">
+        <div className={modalStyles.dpsBody}>
            {filtered.map(o => (
-             <button key={o.id} className="dps-drug-row" onClick={() => { onAdd(o); onClose(); }}>
-               <span className="dps-drug-name">{o.name}</span>
+             <button key={o.id} className={modalStyles.dpsDrugRow} onClick={() => { onAdd(o); onClose(); }}>
+               <span className={modalStyles.dpsDrugName}>{o.name}</span>
              </button>
            ))}
-           {search.length > 0 && filtered.length === 0 && <div className="dps-empty">No matches</div>}
-           {search.length === 0 && <div className="dps-empty" style={{opacity: 0.5}}>Type to search organisms...</div>}
+           {search.length > 0 && filtered.length === 0 && <div className={modalStyles.dpsEmpty}>No matches</div>}
+           {search.length === 0 && <div className={modalStyles.dpsEmpty} style={{opacity: 0.5}}>Type to search organisms...</div>}
         </div>
-        <div className="dps-footer">
-          <button className="dps-cancel-btn" onClick={onClose} style={{width:'100%'}}>Cancel</button>
+        <div className={modalStyles.dpsFooter}>
+          <button className={modalStyles.dpsCancelBtn} onClick={onClose} style={{width:'100%'}}>Cancel</button>
         </div>
       </div>
     </div>
   );
 }
 
-export function ScenarioAdvisor({ sourceId, selectedAbxSet, onToggleAbx, eGFR, setEGFR, onOpenDrugPicker, onBack, onNext }) {
+export function ScenarioAdvisor({ sourceId, riskModifiers, onToggleModifier, selectedAbxSet, onToggleAbx, eGFR, setEGFR, onOpenDrugPicker, onBack, onNext }) {
   const [showOrgPicker, setShowOrgPicker] = useState(false);
   const [cultureOrgs, setCultureOrgs] = useState([]);
+  const [astOverrides, setAstOverrides] = useState({}); // { 'orgId_drugId': 'S'|'I'|'R' }
 
-  // Source details
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
   
-  // Deriving baseline organisms for the scenario
   const baselineOrgIds = useMemo(() => {
     const id = sourceId || 'all';
     return ORGANISMS.filter(o => o.sources.includes(id) || o.sources.includes('all')).slice(0, 3).map(o => o.id);
@@ -71,12 +70,32 @@ export function ScenarioAdvisor({ sourceId, selectedAbxSet, onToggleAbx, eGFR, s
     const map = {};
     const abxIds = Array.from(selectedAbxSet);
     targetOrgs.forEach(org => {
-      map[org.id] = getCoverage(org.id, abxIds);
+      let best = 0;
+      abxIds.forEach(drugId => {
+         const key = `${org.id}_${drugId}`;
+         const override = astOverrides[key];
+         let current = 0;
+         if (override === 'S') current = 2;
+         else if (override === 'I') current = 1;
+         else if (override === 'R') current = 0;
+         else current = getCoverage(org.id, [drugId]);
+         if (current > best) best = current;
+      });
+      map[org.id] = best;
     });
     return map;
-  }, [targetOrgs, selectedAbxSet]);
+  }, [targetOrgs, selectedAbxSet, astOverrides]);
 
   const gaps = targetOrgs.filter(org => coverageMap[org.id] < 2);
+
+  const toggleAST = (orgId, drugId, val) => {
+    setAstOverrides(prev => {
+       const next = { ...prev };
+       const key = `${orgId}_${drugId}`;
+       if (next[key] === val) delete next[key]; else next[key] = val;
+       return next;
+    });
+  };
 
   return (
     <div className={`${styles.advisorScreen} screen fade-in`}>
@@ -94,132 +113,101 @@ export function ScenarioAdvisor({ sourceId, selectedAbxSet, onToggleAbx, eGFR, s
 
          <div className={`${styles.advCard} ${styles.patientContext}`}>
             <h3 className={styles.sectionTitle}>Patient Context</h3>
-            
             <div className={styles.formGroup}>
                <label>Kidney Function (eGFR: {eGFR} mL/min)</label>
-               <input 
-                  type="range" min="5" max="100" step="5" 
-                  value={eGFR} onChange={e => setEGFR(Number(e.target.value))} 
-                  className={styles.advSlider}
-               />
-               <div className={styles.sliderLabels}>
-                  <span>Dialysis</span>
-                  <span>Normal</span>
-               </div>
+               <input type="range" min="5" max="100" step="5" value={eGFR} onChange={e => setEGFR(Number(e.target.value))} className={styles.advSlider} />
+               <div className={styles.sliderLabels}><span>Dialysis</span><span>Normal</span></div>
             </div>
 
             <div className={styles.formGroup}>
-               <label>Drug Allergies</label>
-               <button className={styles.advAddBtn}>+ Add Allergy (Penicillin, etc.)</button>
+               <label>Drug Risk Factors</label>
+               <div className={styles.modsRow}>
+                  {['ICU / Ventilated', 'Prev. ABX <90d', 'Known MDR Carrier'].map(m => (
+                    <button key={m} className={`${styles.modChip} ${riskModifiers?.has(m) ? styles.modActive : ''}`} onClick={() => onToggleModifier(m)}>
+                      {m}
+                    </button>
+                  ))}
+               </div>
             </div>
          </div>
 
          <div className={styles.inputGrid}>
-           <div className={styles.advSectionBlock}>
-              <h3 className={styles.sectionTitle}>Selected Antibiotics</h3>
-              {selectedAbxList.length === 0 ? (
-                 <p className={styles.advEmptyText}>No antibiotics selected yet</p>
-              ) : (
-                 <div className={styles.advList}>
-                    {selectedAbxList.map(abx => (
-                       <div key={abx.id} className={`${styles.advItemCard} abx-card`}>
-                         <div className={styles.abxCTop}>
-                            <strong>{abx.name}</strong>
-                            <button className={styles.advRemoveBtn} onClick={() => onToggleAbx(abx.id)}>✕</button>
-                         </div>
-                         <div className={styles.abxCSub}>{abx.class}</div>
-                         <div className={styles.abxCDetails}>
-                            <span>📍 {abx.route}</span>
-                            <span>💊 Dosing calc available in Safety →</span>
-                         </div>
-                       </div>
-                    ))}
-                 </div>
-              )}
-              <button className={`${styles.advAddBtn} primary`} onClick={onOpenDrugPicker}>+ Add Antibiotic</button>
-           </div>
+            <div className={styles.advSectionBlock}>
+               <h3 className={styles.sectionTitle}>Selected Antibiotics</h3>
+               {selectedAbxList.map(abx => (
+                  <div key={abx.id} className={styles.advItemCard}>
+                    <div className={styles.abxCTop}>
+                       <strong>{abx.name}</strong>
+                       <button className={styles.advRemoveBtn} onClick={() => onToggleAbx(abx.id)}>✕</button>
+                    </div>
+                    <div className={styles.abxCSub}>{abx.class}</div>
+                  </div>
+               ))}
+               <button className={`${styles.advAddBtn} ${styles.primary}`} onClick={onOpenDrugPicker}>+ Add Antibiotic</button>
+            </div>
 
-           <div className={styles.advSectionBlock}>
-              <h3 className={styles.sectionTitle}>Culture Results</h3>
-              {cultureOrgs.length === 0 ? (
-                 <p className={styles.advEmptyText}>No microbiology found yet</p>
-              ) : (
-                 <div className={styles.advList}>
-                    {cultureOrgs.map(org => (
-                       <div key={org.id} className={`${styles.advItemCard} ${styles.orgCard}`}>
-                          <span>{org.name}</span>
-                          <button className={styles.advRemoveBtn} onClick={() => setCultureOrgs(prev => prev.filter(o => o.id !== org.id))}>✕</button>
-                       </div>
-                    ))}
-                 </div>
-              )}
-              <button className={styles.advAddBtn} onClick={() => setShowOrgPicker(true)}>+ Add Organism</button>
-           </div>
+            <div className={styles.advSectionBlock}>
+               <h3 className={styles.sectionTitle}>Culture Results & Overrides</h3>
+               {cultureOrgs.map(org => (
+                  <div key={org.id} className={styles.orgCardComplex}>
+                     <div className={styles.orgRow}>
+                        <strong>{org.name}</strong>
+                        <button className={styles.advRemoveBtn} onClick={() => setCultureOrgs(o => o.filter(x => x.id !== org.id))}>✕</button>
+                     </div>
+                     {selectedAbxList.length > 0 && (
+                        <div className={styles.astList}>
+                           {selectedAbxList.map(abx => {
+                              const v = astOverrides[`${org.id}_${abx.id}`];
+                              return (
+                                 <div key={abx.id} className={styles.astRow}>
+                                    <span>{abx.name}</span>
+                                    <div className={styles.astToggles}>
+                                       <button onClick={() => toggleAST(org.id, abx.id, 'S')} className={`${styles.astBtn} ${v==='S'?styles.astS:''}`}>S</button>
+                                       <button onClick={() => toggleAST(org.id, abx.id, 'I')} className={`${styles.astBtn} ${v==='I'?styles.astI:''}`}>I</button>
+                                       <button onClick={() => toggleAST(org.id, abx.id, 'R')} className={`${styles.astBtn} ${v==='R'?styles.astR:''}`}>R</button>
+                                    </div>
+                                 </div>
+                              )
+                           })}
+                        </div>
+                     )}
+                  </div>
+               ))}
+               <button className={styles.advAddBtn} onClick={() => setShowOrgPicker(true)}>+ Add Microbiology Result</button>
+            </div>
          </div>
 
-         {selectedAbxList.length > 0 && (
-            <div className={styles.advSectionBlock}>
-               <h3 className={styles.sectionTitle}>Coverage Analysis</h3>
-               <div className={styles.advAnalysisList}>
-                  {targetOrgs.map(org => {
-                     const isCovered = coverageMap[org.id] >= 2;
-                     return (
-                        <div key={org.id} className={styles.advCovRow}>
-                           <span className={styles.orgName}>{org.name}</span>
-                           {isCovered ? (
-                              <span className={styles.badgeReliable}>Reliable</span>
-                           ) : (
-                              <span className={styles.badgeNone}>Inadequate</span>
-                           )}
-                        </div>
-                     );
-                  })}
-               </div>
-               
-               {gaps.length > 0 && (
-                  <>
-                     <div className={`${styles.advAlertBox} ${styles.advAlertBoxDanger} mt-4`}>
-                        <div className={styles.alertHdr}>
-                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                           Action Required: Coverage Gaps
-                        </div>
-                        <div className={styles.alertItems}>
-                           {gaps.map(g => (
-                              <div key={g.id} className={styles.alertItemRow}>{g.name}</div>
-                           ))}
-                        </div>
+         <div className={styles.advSectionBlock}>
+            <h3 className={styles.sectionTitle}>Coverage Analysis</h3>
+            <div className={styles.advAnalysisList}>
+               {targetOrgs.map(org => {
+                  const coverage = coverageMap[org.id];
+                  return (
+                     <div key={org.id} className={styles.advCovRow}>
+                        <span className={styles.orgName}>{org.name}</span>
+                        <span className={coverage >= 2 ? styles.badgeReliable : coverage === 1? styles.badgeWarning : styles.badgeNone}>
+                           {coverage >= 2 ? 'RELIABLE' : coverage === 1 ? 'INTERMEDIATE' : 'INADEQUATE/GAPPED'}
+                        </span>
                      </div>
-
-                     <div className={`${styles.advAlertBox} ${styles.advAlertBoxInfo} mt-4`}>
-                        <div className={`${styles.alertHdr} ${styles.alertHdrInfo}`}>
-                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21h6"></path><path d="M12 21v-4"></path><path d="M12 17A7 7 0 1 0 5 10c0 2.38 1.19 4.47 3 5.74V17h8v-1.26c1.81-1.27 3-3.36 3-5.74A7 7 0 1 0 12 10z"></path></svg>
-                           Clinical Suggestion
-                        </div>
-                        <div className={styles.recItems}>
-                           {ANTIBIOTICS.filter(a => gaps.every(g => a.coverage[g.id] >= 2)).slice(0, 3).map(a => (
-                              <div key={a.id} className={styles.recRow}>
-                                 <span className={styles.arr}>→</span> <strong>{a.name}</strong> — Resolves all coverage gaps
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-                  </>
-               )}
+                  );
+               })}
             </div>
-         )}
+            {gaps.length > 0 && (
+               <div className={`${styles.advAlertBox} ${styles.advAlertBoxDanger}`}>
+                  <div className={styles.alertHdr}>CRITICAL COVERAGE GAP</div>
+                  <div className={styles.alertItems}>{gaps.map(g => <div key={g.id}>{g.name}</div>)}</div>
+               </div>
+            )}
+         </div>
       </div>
 
       <div className={styles.advActionFooter}>
          <button className={styles.finalBtn} onClick={onNext}>
-            Proceed to Final Safety Check ▸
+            Confirm & Proceed to Safety Check ▸
          </button>
       </div>
 
-      {showOrgPicker && (
-         <OrgPickerModal onAdd={(org) => {
-            if (!cultureOrgs.find(o => o.id === org.id)) setCultureOrgs([...cultureOrgs, org]);
-         }} onClose={() => setShowOrgPicker(false)} />
-      )}
+      {showOrgPicker && <OrgPickerModal onAdd={o => setCultureOrgs([...cultureOrgs, o])} onClose={() => setShowOrgPicker(false)} />}
     </div>
   );
 }
