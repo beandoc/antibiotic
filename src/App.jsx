@@ -105,9 +105,12 @@ function App() {
   }, [manualAbx]);
 
   const relevantOrgs = useMemo(() => {
-    const id = selectedSourceId || 'all';
-    // Use the 'sources' field from the modular organisms data
-    return ORGANISMS.filter(o => (o.sources || []).includes(id) || (o.sources || []).includes('all'));
+    const id = selectedSourceId;
+    if (!id) {
+      // Undifferentiated scenario defaults to a broad Bacteremia/Sepsis baseline
+      return ORGANISMS.filter(o => (o.sources || []).includes('bact'));
+    }
+    return ORGANISMS.filter(o => (o.sources || []).includes(id));
   }, [selectedSourceId]);
 
   const toggleManualAbx = (id) => {

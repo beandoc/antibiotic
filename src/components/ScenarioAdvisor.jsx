@@ -55,8 +55,12 @@ export function ScenarioAdvisor({ sourceId, riskModifiers, onToggleModifier, sel
   const source = SOURCES.find(s => s.id === sourceId) || { l: 'Undifferentiated', ico: '🌐' };
   
   const baselineOrgIds = useMemo(() => {
-    const id = sourceId || 'all';
-    return ORGANISMS.filter(o => (o.sources || []).includes(id) || (o.sources || []).includes('all')).slice(0, 3).map(o => o.id);
+    const id = sourceId;
+    if (!id) {
+       // Undifferentiated scenario baseline
+       return ORGANISMS.filter(o => (o.sources || []).includes('bact')).slice(0, 3).map(o => o.id);
+    }
+    return ORGANISMS.filter(o => (o.sources || []).includes(id)).slice(0, 3).map(o => o.id);
   }, [sourceId]);
 
   const targetOrgs = useMemo(() => {
