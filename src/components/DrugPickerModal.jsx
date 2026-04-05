@@ -1,3 +1,4 @@
+import React, { useState, useMemo } from 'react';
 import { ANTIBIOTICS, ANTIFUNGALS } from '../data';
 import { X, Search, Check } from 'lucide-react';
 import styles from './DrugPickerModal.module.css';

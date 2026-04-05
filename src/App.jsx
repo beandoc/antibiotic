@@ -119,6 +119,14 @@ function App() {
     setActiveTab('advisor');
   };
 
+  const applyRegimen = (ids) => {
+    setManualAbx(prev => {
+      const next = new Set(prev);
+      ids.forEach(id => next.add(id));
+      return next;
+    });
+  };
+
   return (
     <div className="app-container">
       <main className="main-content">
@@ -164,6 +172,7 @@ function App() {
               }}
               selectedAbxSet={manualAbx}
               onToggleAbx={toggleManualAbx}
+              onApplyRegimen={applyRegimen}
               eGFR={eGFR}
               setEGFR={setEGFR}
               onOpenDrugPicker={openDrugPicker}

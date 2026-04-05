@@ -55,6 +55,7 @@ export function ScenarioAdvisor({
   onToggleModifier, 
   selectedAbxSet = new Set(), 
   onToggleAbx, 
+  onApplyRegimen,
   eGFR = 100, 
   astOverrides = {}, 
   setAstOverrides, 
@@ -158,16 +159,23 @@ export function ScenarioAdvisor({
                                 return <span key={id} className={styles.recTag}>{d?.name || id}</span>;
                              })}
                           </div>
-                          {assessment.gaps.length > 0 && (
-                            <div className={styles.recGaps}>
-                               Gaps in coverage: {assessment.gaps.map(g => g.name).join(', ')}
-                            </div>
-                          )}
+                          <div className={styles.recAnalysisRow}>
+                             {assessment.gaps.length < targetOrgs.length && (
+                               <div className={styles.recCovered}>
+                                  <strong>Covered:</strong> {targetOrgs.filter(o => !assessment.gaps.find(g => g.id === o.id)).map(o => o.name).join(', ')}
+                               </div>
+                             )}
+                             {assessment.gaps.length > 0 && (
+                               <div className={styles.recGaps}>
+                                  <strong>Gaps:</strong> {assessment.gaps.map(g => g.name).join(', ')}
+                               </div>
+                             )}
+                          </div>
                           <div className={styles.recNotes}>{rec.notes}</div>
                        </div>
                        <button 
                          className={`${styles.applyRecBtn} ${isAlreadySelected ? styles.applied : ''}`}
-                         onClick={() => rec.abx.forEach(id => { if(!selectedAbxSet.has(id)) onToggleAbx(id); })}
+                         onClick={() => onApplyRegimen(rec.abx)}
                          disabled={isAlreadySelected}
                        >
                           {isAlreadySelected ? 'Regimen Applied ✓' : 'Apply this combination'}
@@ -255,15 +263,18 @@ export function ScenarioAdvisor({
                <div className={styles.remediationCard}>
                   <div className={styles.remedHdr}><ShieldAlert size={18} /> CRITICAL COVERAGE GAP</div>
                   <div className={styles.remedList}>
-                     {gaps.map(g => {
+                     {Array.from(new Set(gaps.map(g => (g.name.includes('MRSA') ? 'MRSA_VANC' : g.name.includes('VRE') ? 'VRE_LINE' : g.id)))).map(key => {
+                        const g = gaps.find(x => (x.name.includes('MRSA') && key === 'MRSA_VANC') || (x.name.includes('VRE') && key === 'VRE_LINE') || x.id === key);
+                        if (!g) return null;
+                        
                         const rescueDrug = (g.name.includes('MRSA')) ? ALL_DRUGS.find(a => a.name === 'Vancomycin') : 
                                           (g.name.includes('VRE')) ? ALL_DRUGS.find(a => a.name === 'Linezolid') : null;
                         const dose = rescueDrug ? (g.name.includes('MRSA') ? "25mg/kg" : "600mg BD") : "";
                         
                         return (
-                           <div key={g.id} className={styles.remedItem}>
+                           <div key={key} className={styles.remedItem}>
                               <div className={styles.remedLabel}>
-                                 <strong>{g.name}</strong>
+                                 <strong>{g.name.includes('MRSA') ? 'All MRSA' : g.name.includes('VRE') ? 'All VRE' : g.name}</strong>
                                  {rescueDrug && <span>Suggested: {rescueDrug.name} {dose}</span>}
                               </div>
                               {rescueDrug && !selectedAbxSet.has(rescueDrug.id) && (

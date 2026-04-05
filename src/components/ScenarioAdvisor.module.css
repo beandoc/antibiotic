@@ -521,8 +521,12 @@
 .recName { font-size: 16px; font-weight: 700; color: #f1f5f9; }
 .recTags { display: flex; flex-wrap: wrap; gap: 6px; }
 .recTag { font-size: 11px; padding: 3px 10px; border-radius: 6px; background: #1e293b; color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); }
-.recGaps { font-size: 11px; color: #f87171; background: rgba(248, 113, 113, 0.1); padding: 8px; border-radius: 8px; line-height: 1.4; border: 1px solid rgba(248, 113, 113, 0.1); }
-.recNotes { font-size: 12px; color: #94a3b8; line-height: 1.4; opacity: 0.8; }
+.recAnalysisRow { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; padding: 12px; background: rgba(0,0,0,0.15); border-radius: 10px; border: 1px solid rgba(255,255,255,0.03); }
+.recCovered { font-size: 11px; color: #4ade80; line-height: 1.4; opacity: 0.9; }
+.recCovered strong { color: #f1f5f9; font-weight: 800; text-transform: uppercase; font-size: 10px; margin-right: 4px; }
+.recGaps { font-size: 11px; color: #f87171; line-height: 1.4; opacity: 0.9; }
+.recGaps strong { color: #f1f5f9; font-weight: 800; text-transform: uppercase; font-size: 10px; margin-right: 4px; }
+.recNotes { font-size: 11px; color: #94a3b8; line-height: 1.4; margin-top: 12px; font-style: italic; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px; }
 
 .applyRecBtn { 
   margin: 0 16px 16px; padding: 10px; background: #38bdf8; border: none; 
