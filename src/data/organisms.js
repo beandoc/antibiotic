@@ -1,7 +1,6 @@
 /**
- * FINAL CLINICALLY AUDITED PATHOGEN DATABASE (83 Items)
+ * FINAL CLINICALLY AUDITED PATHOGEN DATABASE
  * Alignment: Sanford Guide 2024 / IDSA GDLs
- * FIXED: Restored Gram-negative non-fermenters and BSI mapping.
  */
 export const ORGANISMS = [
   { id: "org_0", name: "E. faecalis (VS)", category: "gpc", sources: ["bact", "uti_comp", "endo", "iab"] },
@@ -40,6 +39,19 @@ export const ORGANISMS = [
   { id: "org_70", name: "Acinetobacter sp.", category: "nf", sources: ["bact", "hap", "uti_comp", "ssti"], crit: 1 },
   { id: "org_71", name: "P. aeruginosa", category: "nf", sources: ["hap", "uti_comp", "bact", "ssti", "cap", "pve"], crit: 1 },
   { id: "org_72", name: "S. maltophilia", category: "nf", sources: ["hap", "bact"], crit: 1 },
+  { id: "org_73", name: "Bordetella pertussis", category: "nf", sources: ["resp_pertussis"] },
+  { id: "org_74", name: "Burkholderia cepacia", category: "nf", sources: ["hap", "bact"] },
+  { id: "org_75", name: "Campylobacter sp.", category: "gne", sources: ["gi_diarrhea"] },
   { id: "org_76", name: "B. fragilis", category: "an", sources: ["iab", "bact", "ssti", "brain_abscess"] },
-  { id: "org_82", name: "Peptostreptococci", category: "an", sources: ["iab", "ssti", "cap"] }
+  { id: "org_77", name: "P. distasonis", category: "an", sources: ["iab", "bact"] },
+  { id: "org_78", name: "Prevotella sp.", category: "an", sources: ["iab", "ssti", "brain_abscess"] },
+  { id: "org_82", name: "C. difficile", category: "an", sources: ["gi_cdiff"] },
+  { id: "org_84", name: "C. urealyticum", category: "gpb", sources: ["uti_comp"] },
+  { id: "org_85", name: "Coxiella burnetii", category: "nf", sources: ["zoonotic_qfever"] },
+  { id: "org_86", name: "EAEC (E. coli)", category: "gne", sources: ["gi_diarrhea"] },
+  { id: "org_87", name: "Eikenella corrodens", category: "gnn", sources: ["ssti", "endo"] },
+  { id: "org_88", name: "Elizabethkingia sp.", category: "nf", sources: ["mening", "hap", "bact"] },
+  { id: "org_89", name: "Gardnerella vaginalis", category: "an", sources: ["sti"] },
+  { id: "org_90", name: "Klebsiella aerogenes", category: "gne", sources: ["bact", "hap", "uti_comp"] },
+  { id: "org_83", name: "Peptostreptococci", category: "an", sources: ["iab", "ssti", "cap"] }
 ];

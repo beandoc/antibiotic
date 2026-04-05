@@ -1,6 +1,10 @@
 export const SOURCES = [
   { id: 'cap', l: '🫁 Community Pneumonia', ico: '🫁', q: 'Cough, sputum, SOB, consolidation on imaging?' },
   { id: 'hap', l: '🏥 Hospital/Vent Pneumonia', ico: '🏥', q: 'In hospital >48h, ventilatated, or high VAP risk?' },
+  { id: 'resp_pertussis', l: '📢 Whooping Cough / Pertussis', ico: '📢', q: 'Paroxysmal cough, post-tussive whoop/vomiting? PCR pending?' },
+  { id: 'gi_diarrhea', l: '🤢 Infectious Diarrhea', ico: '🤢', q: 'Bloody stool, fever, travel history, or poultry exposure?' },
+  { id: 'gi_cdiff', l: '💩 C. diff Infection', ico: '💩', q: 'New onset (>3/day), post-antibiotics, fever, high WBC?' },
+  { id: 'zoonotic_qfever', l: '🐑 Q Fever (Coxiella)', ico: '🐑', q: 'Fever, headache, hepatitis, or livestock exposure?' },
   { id: 'uti_simple', l: '💧 UTI — Simple (Cystitis)', ico: '💧', q: 'Uncomplicated, female, no structural/catheter risk?' },
   { id: 'uti_comp', l: '🔴 UTI — Complicated/Catheter', ico: '🔴', q: 'Male, catheter, structural anomaly, or recent surgical procedure?' },
   { id: 'ssti', l: '🩹 Skin & Soft Tissue (SSTI)', ico: '🩹', q: 'Cellulitis, necrotising, or abscess?' },

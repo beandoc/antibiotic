@@ -233,4 +233,14 @@ export const penicillins = [
       org_81: 3, org_82: 3,
     },
   },
+  {
+    id: "abx_92",
+    name: "Sulb-Durlo",
+    class: "Penicillins",
+    route: "IV",
+    dose_std: "1g/1g q6h (over 3h)",
+    coverage: {
+      org_70: 3, // DEFINITIVE TARGET
+    },
+  },
 ];
